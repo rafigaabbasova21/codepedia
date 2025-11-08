@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CodePedia · Мұғалім панелі</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <style>
+    :root{--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;--grad1:#2563eb;--grad2:#06b6d4;--radius:18px}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .container{max-width:1100px;margin:24px auto;padding:0 16px}
+    .hrow{display:flex;gap:10px;justify-content:space-between;align-items:center}
+    .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+    .primary{background:linear-gradient(90deg,var(--grad1),var(--grad2));color:#fff}
+    .ghost{background:#fff;border:1px solid #e2e8f0}
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 8px 24px rgba(15,23,42,.06);padding:16px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left}
+    .title{font-size:28px;font-weight:800;margin:10px 0 16px}
+
+    /* Backdrop + Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.32);backdrop-filter:blur(2px);display:none;z-index:900}
+    .modal-backdrop.open{display:block}
+    .modal-panel{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;padding:48px 16px;z-index:901;pointer-events:none}
+    .modal{width:min(100%,980px);background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 20px 50px rgba(15,23,42,.15);padding:18px;pointer-events:auto;max-height:80vh;overflow:auto}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .modal-header h3{margin:0;font-weight:800}
+    .row{display:grid;gap:6px;margin:10px 0}
+    .row label{font-size:12px;color:var(--muted)}
+    .row input{width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:10px}
+    .list{display:grid;gap:8px}
+    .muted{color:var(--muted);font-size:12px}
+
+    /* Тек модалдың ішінде — мәтіндік инпуттарды қалыпқа қайтару */
+.modal input.opt-input,
+.modal input.step-input,
+.modal input.test-in,
+.modal input.test-out,
+.modal input.pair-left,
+.modal input.pair-right {
+  appearance: textfield;
+  -webkit-appearance: textfield;
+  background:#fff !important;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:10px;
+  width:100%;
+  font-size:15px;
+}
+.modal input[type="radio"],
+.modal input[type="checkbox"]{
+  appearance:auto;
+  -webkit-appearance:auto;
+}
+.quiz-option-row{ display:flex; align-items:center; gap:8px; }
+
+
+/* ---- 🩵 CodePedia teacher modal input fix ---- */
+
+/* Барлық input-тарды текст түрінде көрсету */
+.modal input[type="text"],
+.modal input.opt-input,
+.modal input.step-input,
+.modal input.test-in,
+.modal input.test-out,
+.modal input.pair-left,
+.modal input.pair-right {
+  all: unset; /* бұрынғы switch, checkbox, button стильдерін өшіреді */
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: #0f172a;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+/* Радио мен чекбоксты өз қалпына келтіру */
+.modal input[type="radio"],
+.modal input[type="checkbox"] {
+  all: revert;
+  transform: scale(1.2);
+  margin-right: 6px;
+}
+
+/* Опция қатарлары мен жұптардың орналасуы */
+.quiz-option-row,
+.match-pair-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+/* Батырмаларды реттеу */
+.quiz-option-row .btn,
+.match-pair-row .btn {
+  white-space: nowrap;
+}
+
+/* Инпут ұзындығын нақтырақ қылу */
+.modal .row input,
+.modal .row textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* placeholder түсін жұмсарту */
+.modal input::placeholder {
+  color: #94a3b8;
+}
+
+/* textarea — code editor үшін */
+.modal textarea {
+  resize: vertical;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  background: #fff;
+  color: #0f172a;
+}
+
+/* Түсін және hover эффект */
+.modal input:focus,
+.modal textarea:focus {
+  outline: 2px solid #2563eb;
+  border-color: #2563eb;
+}
+
+/* Тест пен жұп блоктары */
+.card.step {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+/* ---- Fix option inputs in quiz editor (force text fields) ---- */
+.modal input.opt-input,
+.modal .step input.step-input,
+.modal .step input.test-in,
+.modal .step input.test-out,
+.modal .step input.pair-left,
+.modal .step input.pair-right {
+  all: unset !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 40px !important;
+  padding: 10px 12px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: #0f172a !important;
+  box-sizing: border-box !important;
+  font: 15px/1.4 "Inter", system-ui, sans-serif !important;
+}
+
+.modal input.opt-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Радио өз қалпында */
+.modal input[type="radio"] {
+  all: revert !important;
+  transform: scale(1.1);
+  margin-right: 8px;
+}
+
+
+.match-wrap{ display:flex; flex-direction:column; gap:10px; }
+.match-row{ display:flex; align-items:center; gap:12px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:12px; }
+.match-left{ flex:1; font-weight:600; color:#0f172a; }
+.match-right select{ width:260px; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:#fff; }
+.match-actions{ display:flex; align-items:center; margin-top:6px; }
+.match-select.ok{ border-color:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.15); }
+.match-select.bad{ border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.12); }
+
+
+  </style>
+</head>
+<body>
+  <div id="appHeader"></div>
+  <div id="appSidebar"></div>
+
+  <main class="container">
+    <div class="hrow">
+      <h1 class="title">Мұғалім панелі</h1>
+      <div class="hrow" style="gap:8px">
+        <button id="btnRatings" class="btn ghost">📊 Оқушылар рейтингі</button>
+        <button id="btnAddLesson" class="btn primary">➕ Жаңа сабақ қосу</button>
+      </div>
+    </div>
+
+    <section id="lessonsSection" class="card">
+      <h2 style="margin:0 0 10px">Сабақтар тізімі</h2>
+      <div id="noLessons" style="display:none;color:#64748b">Әзірге сабақ жоқ. «Жаңа сабақ қосу» батырмасын басыңыз.</div>
+      <div class="table-wrap">
+        <table id="lessonsTable">
+          <thead>
+            <tr><th>ID</th><th>Атауы</th><th>Қадам</th><th>Ұзақт.</th><th>Әрекет</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Backdrop -->
+  <div id="backdrop" class="modal-backdrop"></div>
+
+  <!-- Lesson Modal -->
+  <div id="lessonPanel" class="modal-panel">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Сабақты өңдеу</h3>
+        <button id="closeLesson" class="btn ghost">Жабу</button>
+      </div>
+
+      <div class="row"><label>ID</label><input id="formLessonId" /></div>
+      <div class="row"><label>Сабақ атауы</label><input id="formLessonTitle" /></div>
+      <div class="row"><label>Ұзақтығы (мин)</label><input id="formLessonDuration" type="number" value="30" /></div>
+
+      <h4 style="margin:10px 0">Қадамдар</h4>
+      <div class="hrow" style="gap:8px;margin:8px 0 12px">
+        <button id="btnAddSlide" class="btn ghost">+ Слайд</button>
+        <button id="btnAddQuiz"  class="btn ghost">+ Тест</button>
+        <button id="btnAddCode"  class="btn ghost">+ Код</button>
+        <button id="btnAddMatch" class="btn ghost">+ Сәйкест.</button>
+      </div>
+      <div id="stepsContainer" class="list"></div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+        <button id="saveLesson" class="btn primary">Сақтау</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ratings Modal -->
+  <div id="ratingsPanel" class="modal-panel">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Оқушылар рейтингі</h3>
+        <button id="closeRatings" class="btn ghost">Жабу</button>
+      </div>
+      <table class="table" style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr><th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0">Қолданушы</th><th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0">Сабақ</th><th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0">Аяқталған/Барл.</th><th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0">%</th><th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0">Балл</th></tr>
+        </thead>
+        <tbody id="ratingsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/header.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/teacher-admin.js?v=2"></script>
+
+  
+
+</body>
+</html>

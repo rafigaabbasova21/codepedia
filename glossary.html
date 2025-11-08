@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Глоссарий · CodePedia</title>
+  <link rel="stylesheet" href="css/common.css"/>
+  <style>
+    .alphabet { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 18px; }
+    .chip { padding:8px 12px; border:1px solid var(--border); border-radius:10px;
+            background:#fff; cursor:pointer; text-decoration:none; color:inherit; }
+    .chip.active { background: var(--brand-ghost); border-color: var(--brand); color: var(--brand-dark); font-weight: 700; }
+    .term-list { display:flex; flex-direction:column; gap:14px; }
+    .term { background: #f9fafb; border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .term b { color: var(--brand-dark); font-size: 18px; }
+    .muted-sm { color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div id="appHeader"></div>
+  <div id="appSidebar"></div>
+
+  <main class="container">
+    <section class="card">
+      <h2 id="pageTitle">📖 Глоссарий</h2>
+
+      <div id="lettersBar" class="alphabet"></div>
+
+      <div class="muted-sm" id="countInfo">—</div>
+      <div id="terms" class="term-list"></div>
+    </section>
+  </main>
+
+  <script src="js/header.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/guard.js"></script>
+  <script src="js/glossary.js"></script>
+  <script>renderHeader(); renderSidebar();</script>
+</body>
+</html>

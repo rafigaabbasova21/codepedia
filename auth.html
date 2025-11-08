@@ -1,0 +1,36 @@
+<!doctype html><html lang="kk"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CodePedia · Кіру/Тіркелу</title>
+<!-- auth.html -->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CodePedia · Кіру/Тіркелу</title>
+
+  <!-- МІНДЕТТІ: жалпы стильдер -->
+  <link rel="stylesheet" href="css/common.css" />
+
+  <!-- Auth бетінің жеке стилі -->
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+
+<link rel="stylesheet" href="css/auth.css"/></head><body class="auth-body">
+<div class="container"><div class="grid-2">
+<section class="panel" id="loginPanel"><h2>Кіру</h2><div id="loginError"></div>
+<div class="form-row"><label>Email</label><input id="loginEmail" class="input" placeholder="email@school.kz"></div>
+<div class="form-row"><label>Құпиясөз</label><input id="loginPassword" class="input" type="password" placeholder="••••••••"></div>
+<button id="loginBtn" class="btn primary">Кіру</button><div class="small" style="margin-top:10px">Тіркелмеген болсаңыз — оң жақтағы форманы толтырыңыз.</div></section>
+<section class="panel" id="registerPanel"><h2>Тіркелу</h2><div id="regError"></div>
+<div class="form-row"><label>Аты-жөні</label><input id="regName" class="input" placeholder="Аты-жөніңіз"></div>
+<div class="form-row"><label>Email</label><input id="regEmail" class="input" placeholder="email@school.kz"></div>
+<div class="form-row"><label>Сыныбы</label><select id="regClass" class="input"><option disabled selected>Таңдаңыз…</option><option>5A</option><option>6A</option><option>7A</option><option>8A</option><option>9A</option><option>10A</option><option>11A</option></select></div>
+<div class="form-row"><label>Құпиясөз</label><input id="regPassword" class="input" type="password" placeholder="кемі 6 таңба"></div>
+<div class="form-row"><label>Аватар</label><div class="avatar-wrap"><div class="avatar-preview" id="avatarPreview"><span class="small">Сурет жоқ</span></div><div>
+<label class="btn">Файлдан таңдау<input id="avatarFile" type="file" accept="image/*" style="display:none"></label>
+<button id="clearAvatar" class="btn danger" type="button">Тазарту</button>
+<div class="small" style="margin:6px 0 12px">Немесе медиатекадан таңдаңыз:</div><div class="gallery" id="avatarGallery"></div></div></div></div>
+<button id="registerBtn" class="btn primary">Тіркелу</button><div class="small" style="margin-top:10px">Тіркелген соң жүйе сізді дашбордқа апарады.</div></section>
+</div><div class="center small" style="margin-top:18px">Деректер браузердің <b>LocalStorage</b>-ында сақталады.</div></div>
+<script src="js/auth.js"></script>
+
+</body></html>

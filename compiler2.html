@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  </head>
+  <body>
+    <script>
+      function builtinRead(x){
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined){
+          throw "File not found: '" + x + "'";
+        }
+        return Sk.builtinFiles["files"][x];
+      }
+      async function run(code, stdinText){
+        const inputBuf = String(stdinText||'').replace(/\r/g,'').split('\n');
+        let captured = '';
+        Sk.configure({
+          output: s => { captured += s; },
+          read: builtinRead,
+          inputfun: () => (inputBuf.length ? inputBuf.shift() : ''),
+          __future__: Sk.python3
+        });
+        try{
+          await Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, code, true));
+          return { stdout: captured, stderr: "" };
+        }catch(e){
+          return { stdout: captured, stderr: String(e) };
+        }
+      }
+      window.addEventListener('message', async (ev)=>{
+        const d = ev.data || {};
+        if (d.cmd !== 'run') return;
+        const res = await run(d.code||'', d.stdin||'');
+        ev.source && ev.source.postMessage({ reply:'run', payload: res }, '*');
+      });
+    </script>
+  </body>
+</html>

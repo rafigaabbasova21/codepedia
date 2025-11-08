@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Статистика · CodePedia</title>
+  <link rel="stylesheet" href="css/common.css"/>
+  <style>
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media(max-width: 1100px){ .grid{ grid-template-columns: repeat(2,1fr); } }
+    @media(max-width: 620px){ .grid{ grid-template-columns: 1fr; } }
+    .kpi { text-align:left; }
+    .kpi h1{ margin:0; font-size:42px }
+    .heat { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; }
+    .cell { height:22px; border-radius:6px; border:1px solid var(--border); background:#fff }
+    .cell.on { background:#c7f9cc; border-color:#8de4a1 }
+    .bar { height:12px; border-radius:8px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); }
+    .row { display:flex; align-items:center; gap:10px }
+    .row .label{ width:160px; color: var(--muted) }
+    .muted-sm{ color: var(--muted); font-size: 12px }
+  </style>
+</head>
+<body>
+  <div id="appHeader"></div>
+  <div id="appSidebar"></div>
+
+  <main class="container">
+    <section class="card">
+      <h2>📊 Сіздің прогресс туралы ақпарат</h2>
+
+      <div class="grid">
+        <div class="card kpi">
+          <div class="muted-sm">Жалпы кірген күндер</div>
+          <h1 id="kpiDays">—</h1>
+        </div>
+
+        <div class="card kpi">
+          <div class="muted-sm">Оқыған сабақ саны</div>
+          <h1 id="kpiStreak">—</h1>
+        </div>
+
+        <div class="card kpi">
+          <div class="muted-sm">Олимпиада есептері </div>
+          <h1 id="kpiSolved">—</h1>
+        </div>
+
+        <div class="card kpi">
+          <div class="muted-sm">Сабақ тесттері (≥80%)</div>
+          <!-- Үлкен сан: өткен тесттер саны -->
+          <h1 id="kpiLessons">—</h1>
+          <!-- Егжей: орташа % және есептелген тесттер саны -->
+          <div style="font-size:22px; font-weight:700">
+            Орташа балл: <span id="kpiLessonsAvg">0</span>% 
+            <span class="muted" style="font-size:14px"> · Өткен тесттер: <span id="kpiLessonsCount">0</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Жылдық календарь</h3>
+        <div><select id="monthSel" class="pill"></select></div>
+      </div>
+      <div id="calendar" class="heat" style="margin-top:12px"></div>
+      <div class="muted-sm">Жасыл ұяшық — сол күні сайтқа кірген.</div>
+    </section>
+
+    <section class="card">
+      <h3>Қысқаша аналитика</h3>
+      <div class="row"><div class="label">Арена әрекеттері</div><div style="flex:1"><div id="bar-attempts" class="bar"></div></div></div>
+      <div class="row"><div class="label">Арена шешімдері</div><div style="flex:1"><div id="bar-solved" class="bar"></div></div></div>
+    </section>
+  </main>
+
+  <script src="js/header.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/guard.js"></script>
+  <script src="js/telemetry.js"></script>
+  <script>
+    renderHeader(); renderSidebar();
+
+    // Telemetry-ді қайта агрегаттаймыз (соңғы мәндер)
+    const fresh = Telemetry.aggregate();
+    const s = Telemetry.getStats() || fresh;
+
+    // KPI
+    const daysCount = Object.keys(s.visitsByDay || {}).length;
+    document.getElementById('kpiDays').textContent    = daysCount;
+    document.getElementById('kpiStreak').textContent  = s.streak || 0;
+    document.getElementById('kpiSolved').textContent  = s.arenaSolved || 0;
+
+    // Сабақ тесттері (≥80): үлкен сан, орташа %, саны
+    document.getElementById('kpiLessons').textContent     = s.lessonsPassed || 0;
+    document.getElementById('kpiLessonsAvg').textContent  = s.lessonsAvgScore || 0;
+    document.getElementById('kpiLessonsCount').textContent= s.lessonsPassed || 0;
+
+    // Bars (пропорциямен, max=100%)
+    function pct(v){ return Math.min(100, (v || 0) * 10); }
+    document.getElementById('bar-attempts').style.width = pct(s.arenaAttempts) + '%';
+    document.getElementById('bar-solved').style.width   = pct(s.arenaSolved)   + '%';
+
+    // Month selector
+    const monthSel = document.getElementById('monthSel');
+    const months = ['Қаңтар','Ақпан','Наурыз','Сәуір','Мамыр','Маусым','Шілде','Тамыз','Қыркүйек','Қазан','Қараша','Желтоқсан'];
+    const now = new Date();
+    months.forEach((m,i)=> {
+      const o = document.createElement('option');
+      o.value = (i+1).toString().padStart(2,'0');
+      o.textContent = m;
+      if (i === now.getMonth()) o.selected = true;
+      monthSel.appendChild(o);
+    });
+
+    function renderMonth() {
+      const m = monthSel.value;
+      const y = now.getFullYear();
+      const d = new Date(y, parseInt(m), 0).getDate(); // days in month
+      const grid = document.getElementById('calendar'); grid.innerHTML = '';
+      const map = s.visitsByDay || {};
+      for (let day=1; day<=d; day++) {
+        const key = `${y}-${m}-${String(day).padStart(2,'0')}`;
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (map[key] ? ' on' : '');
+        cell.title = key + (map[key] ? ' · кірген' : '');
+        grid.appendChild(cell);
+      }
+    }
+    monthSel.onchange = renderMonth;
+    renderMonth();
+  </script>
+</body>
+</html>

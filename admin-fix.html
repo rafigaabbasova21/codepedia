@@ -1,0 +1,95 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CodePedia · Admin Fix</title>
+<style>
+  body{font:16px/1.4 system-ui, sans-serif; max-width:720px; margin:40px auto; padding:0 16px}
+  pre{background:#0f172a; color:#e2e8f0; padding:14px; border-radius:10px; overflow:auto}
+  button{padding:10px 14px; border-radius:10px; border:1px solid #e2e8f0; cursor:pointer}
+  .ok{color:#16a34a;font-weight:700}
+  .warn{color:#b45309}
+</style>
+<h1>Admin Fix</h1>
+<p>Бұл бет <b>localStorage</b>-тағы қате мәндерді түзеп, админді орнатады.</p>
+
+<button id="run">Фиксті іске қосу</button>
+<pre id="log"></pre>
+
+<script>
+const log = (m)=> (document.getElementById('log').textContent += m + "\n");
+
+document.getElementById('run').onclick = ()=>{
+  try{
+    // 1) Барлығын оқимыз
+    let rawUsers = localStorage.getItem('cp_users');
+    let users = [];
+    if(rawUsers){
+      try{
+        const parsed = JSON.parse(rawUsers);
+        if(Array.isArray(parsed)) users = parsed;
+        else{
+          log("⚠️ cp_users массив емес → тазалаймын.");
+          users = [];
+        }
+      }catch(e){
+        log("⚠️ cp_users JSON емес → тазалаймын.");
+        users = [];
+      }
+    }
+
+    // 2) Әдепкі админді қамтамасыз ету
+    const ADMIN = {
+      name: "Admin",
+      email: "admin@codepedia.kz",
+      password: "admin123",
+      class: "Мұғалім",
+      role: "teacher",
+      avatarUrl: ""
+    };
+    const hasAdmin = users.some(u => (u.email||"").toLowerCase() === ADMIN.email);
+    if(!hasAdmin){
+      users.push(ADMIN);
+      log("✅ Админ қосылды: admin@codepedia.kz / admin123");
+    }else{
+      log("ℹ️ Админ бұрыннан бар.");
+    }
+
+    // 3) cp_users дұрыстап жазу
+    localStorage.setItem('cp_users', JSON.stringify(users));
+
+    // 4) Қазір кім кіргенін админ қыламыз
+    localStorage.setItem('cp_current', ADMIN.email);
+
+    // 5) Сабақ құрылымы бар ма, тексереміз (міндетті емес)
+    let courses = null;
+    try{ courses = JSON.parse(localStorage.getItem('cp_courses')||'null'); }catch(e){ courses=null; }
+    if(!courses || !courses.courses || !courses.courses['python-0']){
+      courses = {
+        currentCourseId: "python-0",
+        courses:{
+          "python-0":{
+            title:"Python 0-ден",
+            lessons:[
+              { id:"py-01", title:"Кіріспе", duration:20, steps:[
+                {type:"slide", title:"Слайд", src:"https://docs.google.com/presentation/d/e/2PACX-1vQDemo/embed"}
+              ]},
+              { id:"py-02", title:"Айнымалылар", duration:30, steps:[] }
+            ]
+          }
+        }
+      };
+      localStorage.setItem('cp_courses', JSON.stringify(courses));
+      // Реттілік
+      localStorage.setItem('cp_lesson_order', JSON.stringify(courses.courses['python-0'].lessons.map(l=>l.id)));
+      log("✅ Тест сабақтары қосылды (py-01, py-02).");
+    }else{
+      log("ℹ️ Сабақтар бар, өзгерткен жоқпын.");
+    }
+
+    // 6) Авторизацияға керек кішігірім guard көмек
+    // (teacher.html ішінде тексересің: егер current user admin болса — жібер)
+    log("\n<b class='ok'>Дайын!</b> Енді teacher.html бетін жаңартып аш.");
+  }catch(err){
+    log("❌ Қате: "+err.message);
+  }
+};
+</script>

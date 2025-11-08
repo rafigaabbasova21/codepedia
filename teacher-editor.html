@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>CodePedia · Сабақты өңдеу</title>
+  <link rel="stylesheet" href="css/common.css"/>
+  <style>
+    body{background:#f8fafc}
+    .container{max-width:980px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,.06);padding:16px}
+    .row{display:grid;gap:8px;margin-bottom:12px}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:12px}
+    textarea{min-height:80px}
+    .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+    .primary{background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff}
+    .ghost{background:#fff;border:1px solid #e2e8f0}
+    .list{display:grid;gap:12px}
+    .step{border:1px dashed #cbd5e1;border-radius:12px;padding:12px}
+    .muted{color:#64748b;font-size:13px}
+  </style>
+</head>
+<body>
+  <div id="appHeader"></div>
+  <main class="container">
+    <h1 style="margin:8px 0 14px">Сабақты өңдеу</h1>
+    <div class="card">
+      <div class="row" style="grid-template-columns:1fr 1fr 120px">
+        <div><label>ID</label><input id="e_id" disabled></div>
+        <div><label>Атауы</label><input id="e_title"></div>
+        <div><label>Ұзақт. (мин)</label><input id="e_dur" type="number" value="30"></div>
+      </div>
+
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div class="muted">Қадамдар</div>
+        <button id="btnAddStep" class="btn ghost">+ Қадам қосу</button>
+      </div>
+      <div id="stepsWrap" class="list"></div>
+
+      <div class="row" style="justify-items:start">
+        <button id="btnSaveAll" class="btn primary">Барлығын сақтау</button>
+        <a href="teacher.html" class="btn ghost">Мұғалім панелі</a>
+      </div>
+      <p class="muted">Қадам типтері: <b>slide</b> (Google Slides embed), <b>quiz</b> (бір дұрыс), <b>code</b> (Python), <b>match</b> (сәйкестендіру).</p>
+    </div>
+  </main>
+
+  <script src="js/header.js"></script>
+  <script>renderHeader();</script>
+  <script src="js/teacher-editor.js"></script>
+</body>
+</html>

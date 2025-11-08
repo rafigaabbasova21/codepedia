@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Python Компилятор · CodePedia</title>
+  <!-- немесе common.css — сен қолданған файлды қалдырдым -->
+  <link rel="stylesheet" href="css/common2.css" />
+</head>
+<body>
+  <div id="appHeader"></div>
+  <div id="appSidebar"></div>
+
+  <main class="container">
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <h2 style="margin:0">⚙️ Python компиляторы</h2>
+        <div class="badge" id="who">—</div>
+      </div>
+
+      <div class="pill" id="badge">Миссия: —</div>
+      <div style="height:8px"></div>
+
+      <div class="card" style="border-radius:16px;background:#f8fafc">
+        <b>Миссия:</b> <span id="taskTitle">—</span><br />
+        <span class="muted" id="taskHint">—</span>
+
+        <div class="card" style="margin-top:10px;border-radius:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <b>Тест-кейстер (Input → Expected Output)</b>
+            <span class="pill" id="casesCount">0 кейс</span>
+          </div>
+          <table id="casesTable" style="width:100%;border-collapse:separate;border-spacing:0 8px"></table>
+        </div>
+      </div>
+
+      <div style="margin:10px 0" class="pill">Кодыңызды жазыңыз:</div>
+      <textarea id="codeArea"
+        style="width:100%;height:360px;border:1px solid var(--border);border-radius:14px;padding:12px;font-family:ui-monospace,monospace"></textarea>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn primary" id="runBtn">▶ Барлық тестті жүгірту</button>
+        <button class="btn" id="saveBtn">💾 Сақтау</button>
+        <a class="btn" href="problems.html">← Есептерге қайту</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin:0 0 8px 0">🖥 Консоль</h3>
+      <div id="console" class="console"></div>
+    </section>
+  </main>
+
+  <!-- Skulpt (Python) -->
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+
+  <!-- Біздің js: header/sidebar/guard -->
+  <script src="js/header.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/guard.js"></script>
+  <script src="js/telemetry.js"></script>
+  <script src="js/compiler_arena.js"></script>
+
+
+  <!-- МІНДЕТТІ: Telemetry компилятордан БҰРЫН -->
+
+  <!-- Арена логикасы (Telemetry-ден кейін бір рет қана қосылады) -->
+
+  <script>
+    renderHeader();
+    renderSidebar();
+  </script>
+</body>
+</html>

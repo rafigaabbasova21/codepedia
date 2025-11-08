@@ -1,0 +1,64 @@
+<!doctype html><html lang="kk"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CodePedia · Дашборд</title>
+<link rel="stylesheet" href="css/common.css"/></head>
+<link rel="stylesheet" href="css/common.css"/>
+
+<body>
+<div id="appHeader"></div>
+<div id="appSidebar"></div>
+<main class="container">
+
+<!-- HERO: Қош келдіңіз -->
+ <section class="card hero-cta">
+  <div class="hero-cta__bg"></div>
+  <div class="hero-cta__content">
+    <div class="hero-cta__text">
+      <h2 class="hero-cta__title">Бүгіннен бастап CodePedia-мен!</h2>
+
+      <p class="hero-cta__subtitle">
+  👋 Сәлем, <span id="heroUser">қолданушы</span>! Бүгін жаңа нәрсе үйренейік. 💪
+</p>
+
+      
+      <div class="hero-cta__actions">
+        <a href="mycourse.html" class="btn btn-lg no-underline">Соңғы сабақты оқу</a>
+<a href="problems.html" class="btn btn-outline no-underline">Олипиадалық есептер</a>
+
+ 
+      </div>
+    </div>
+
+    
+    <div class="hero-cta__art" aria-hidden="true">
+
+       <img src="img/mascot.png" alt=""  class="hero-ill" > 
+    </div>
+  </div>
+</section>  
+
+
+<div class="grid-2">
+  
+  <section class="card"><h3>Сіздің соңғы келген сабағыңыз</h3><div class="muted">Автоматты түрде анықталады (placeholder)</div><div style="height:10px"></div><div class="row" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap"><span class="badge" id="lastLesson">—</span><a class="btn primary" href="topics.html">Оқу</a></div></section>
+  <section class="card"><h3>Кіру белсенділігі</h3><div class="muted">Жылдық календарь кейін қосылады (placeholder)</div><div style="height:10px"></div><button class="btn">Календарьді таңдау</button></section>
+<section class="card"><h3>Менің деңгейім</h3><div class="muted">Бірінші және екінші тест нәтижелері · айырмасы (placeholder)</div><div style="height:10px"></div><div class="row" style="display:flex; gap:10px; flex-wrap:wrap"><span class="badge" id="level1">1-тест: — % · —</span><span class="badge" id="level2">2-тест: — % · —</span><span class="badge" id="levelDiff">Айырма: — %</span></div></section>
+
+
+
+<section class="card"><h3>Сіздің прогрессіңіз</h3><div id="progressInfo" class="muted">Жүктелуде…</div></section></main><script src="js/header.js"></script><script src="js/sidebar.js"></script><script src="js/guard.js"></script>
+</div>
+
+</main>
+
+
+
+
+<script>renderHeader();renderSidebar();(function(){const email=localStorage.getItem('cp_current')||'guest';const key='arena_progress_'+email;let p={};try{p=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){};const solved=Object.values(p).filter(v=>v?.status==='passed').length;document.getElementById('progressInfo').textContent='Аренада шешілген есептер: '+solved;})();</script>
+<script src="js/header.js"></script><script src="js/sidebar.js"></script>
+<script src="js/guard.js"></script><script src="js/dashboard.js"></script>
+<script>renderHeader(); renderSidebar();</script>
+<!-- барлық беттерде header/sidebar астына қос -->
+<script src="js/telemetry.js"></script>
+
+</body></html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CodePedia · Сабақ</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/lesson.css">
+</head>
+<body>
+  <div id="appHeader"></div>
+  <div id="appSidebar"></div>
+
+  <main class="container">
+    <div class="lesson-head">
+      <div class="crumbs"><a href="mycourse.html">Курстар</a> · <span id="lessonId">…</span></div>
+    </div>
+    <h1 class="title" id="lessonTitle">Сабақ</h1>
+    <div class="bar">
+      <div class="progress"><span id="topProgress"></span></div>
+      <div class="score-pill" id="scorePill">Балл: 0</div>
+    </div>
+
+    <div class="stepbar" id="stepBar"></div>
+
+    <section class="step-card" id="stepRoot"><!-- динамик --></section>
+  </main>
+<script>
+  // cp_courses-тен дәл осы сабақты оқып, lesson.js келмей тұрып глобалға жазамыз
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const LID = params.get('lesson') || 'py-01';
+
+    try {
+      const store = JSON.parse(localStorage.getItem('cp_courses') || 'null');
+      const course = store && store.courses && store.courses['python-0'];
+      if (!course) return;
+      const lessons = course.lessons || [];
+      const found = lessons.find(l => l.id === LID);
+      if (!found) return;
+
+      // 1) lesson.js қолданатын глобал мәндер
+      window.STEPS = found.steps;                               // динамик қадамдар
+      window.LESSON_ORDER = lessons.map(l => l.id);             // келесі тақырып реті
+
+      // 2) UI тақырыптары
+      const t = document.getElementById('lessonTitle');
+      if (t && found.title) t.textContent = found.title;
+      const lid = document.getElementById('lessonId');
+      if (lid) lid.textContent = found.id;
+    } catch (e) {
+      // тыныш өтеміз
+    }
+  })();
+</script>
+<!-- Енді ғана негізгі логика жүктеледі -->
+<script src="js/lesson.js"></script>
+
+  <script src="js/header.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script>renderHeader(); renderSidebar();</script>
+
+  <script src="js/lesson.js"></script>
+</body>
+</html>

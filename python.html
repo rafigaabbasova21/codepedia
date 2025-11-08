@@ -1,0 +1,16 @@
+<!doctype html><html lang="kk"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python 0-ден · CodePedia</title>
+<link rel="stylesheet" href="css/common.css"/><link rel="stylesheet" href="css/python.css"></head><body>
+<div id="appHeader"></div>
+<div id="appSidebar"></div>
+<main class="container">
+<section class="lesson-card"><h2 id="lessonTitle">Сабақ тақырыбы</h2><iframe id="pdfFrame" class="lesson-pdf" src="" frameborder="0"></iframe>
+<div class="actions"><button id="startTestBtn" class="btn primary">🧪 Тақырыптық тест</button><button id="nextLessonBtn" class="btn" disabled>➡️ Келесі сабақ</button><a class="btn" href="topics.html">← Тақырыптар</a></div></section>
+<section id="testSection" class="card test hidden"><div class="test-header"><h3>Тест сұрақтары</h3><div id="progressPill" class="pill">0 / 0</div></div>
+<div id="questions" class="q-list"></div><div class="actions"><button id="submitTestBtn" class="btn primary">Тестті аяқтау</button><div id="result" class="result"></div></div></section>
+</main>
+<script src="js/header.js"></script><script src="js/sidebar.js"></script>
+<script src="js/guard.js"></script><script src="js/python.js"></script>
+<script>renderHeader(); renderSidebar();</script>
+</body></html>
