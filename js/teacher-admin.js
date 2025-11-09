@@ -2,8 +2,16 @@
 const $ = s => document.querySelector(s);
 
 // storage
-function getStore(){ try{ return JSON.parse(localStorage.getItem('cp_courses')||'{}'); }catch(_){ return {}; } }
+function getStore(){
+  try{
+    return JSON.parse(localStorage.getItem('cp_courses') || '{}');
+  }catch(_){
+    return {};
+  }
+}
+
 function setStore(x){
+  // 1) Әдеттегідей localStorage-қа жазамыз (мұғалім өз браузерінде көре беруі үшін)
   try{
     localStorage.setItem('cp_courses', JSON.stringify(x));
   }catch(e){
@@ -11,7 +19,23 @@ function setStore(x){
     alert('Сақтау мүмкін емес: браузердің localStorage жадысы толып кетті. '
       + 'Кейбір ескі сабақтарды немесе үлкен суреттерді өшіру керек.');
   }
+
+  // 2) Қосымша — Firebase-ке де жазамыз (барлық қолданушыларға ортақ болу үшін)
+  if (window.db) {
+    window.db.ref('cp_courses').set(x)
+      .then(()=>{
+        console.log('[cp] cp_courses Firebase-ке синхрондалды');
+      })
+      .catch(err=>{
+        console.error('Firebase-ке жазу қатесі:', err);
+        // Қаласаң, мына жерге alert қойсаң да болады
+        // alert('Firebase-ке сақтай алмадық, кейін қайталап көріңіз');
+      });
+  } else {
+    console.warn('Firebase db табылмады, тек localStorage-қа ғана сақталды');
+  }
 }
+
 
 const COURSE_ID = (getStore().currentCourseId)||'python-0';
 
@@ -526,3 +550,4 @@ document.addEventListener('DOMContentLoaded', ()=>{
     !!($('#backdrop'))
   );
 });
+
