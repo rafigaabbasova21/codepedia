@@ -63,34 +63,27 @@
     </section>
   </main>
 
-  <!-- Firebase SDK (compat) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <!-- Firebase SDK (compat) – тек осы екеуі керек -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-<!-- Біздің конфиг -->
-<script src="js/firebase-config.js"></script>
-
-  <!-- Firebase v8 -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-    <!-- Config (Firebase-тен cp_courses жүктейді) -->
+    <!-- Біздің конфиг: window.db жасап, cp_courses-ты жүктейді -->
     <script src="js/firebase-config.js"></script>
 
-    <!-- Курстар тізімі -->
+    <!-- Хедер/сайдбар (бұлар Firebase-ке тәуелді емес) -->
+    <script src="js/header.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script>
+      renderHeader();
+      renderSidebar();
+    </script>
+
+    <!-- Курстар тізімі (cp_courses localStorage-тан оқиды) -->
     <script src="js/mycourse.js"></script>
-
-  <!-- Скрипттер (әрқайсысы бір рет қана) -->
-  <script src="js/header.js"></script>
-  <script src="js/sidebar.js"></script>
-  <script>renderHeader(); renderSidebar();</script>
-
-  <!-- Алдымен localStorage-ты cp_courses.json-нан толтырамыз -->
-<script src="js/courses-seed.js"></script>
-
- 
-</body>
+  </body>
 </html>
+
+
 
 
 
