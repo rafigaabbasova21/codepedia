@@ -1,9 +1,12 @@
 {
+  "version": "1.0.0",
   "currentCourseId": "python-0",
   "courses": {
     "python-0": {
       "title": "Python 0-ден: интерактивті курс",
-      "lessons": []
+      "lessons": [
+        // сенің сабақтарың…
+      ]
     }
   }
 }
