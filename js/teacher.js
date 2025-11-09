@@ -1,4 +1,6 @@
-const $ = (s, ro=document) => ro.querySelector(s);
+// querySelector қысқартуы (жеке, басқа файлдармен қақтығыспайды)
+const qs = (s, ro=document) => ro.querySelector(s);
+
 const saveJSON = (k,v)=> localStorage.setItem(k, JSON.stringify(v));
 const loadJSON = (k, fb=null)=>{ try{ const r=localStorage.getItem(k); return r?JSON.parse(r):fb }catch(_){ return fb } };
 
@@ -9,8 +11,8 @@ const COURSE_ID = 'python-0';    // біздің курс
 let builder = { id:'', title:'', duration:30, steps:[] };
 
 function renderStepFields(){
-  const type = $('#stepType').value;
-  const host = $('#stepFields');
+  const type = qs('#stepType').value;
+  const host = qs('#stepFields');
   let html = '';
 
   if(type==='slide'){
@@ -47,14 +49,14 @@ function renderStepFields(){
   host.innerHTML = html;
 }
 renderStepFields();
-$('#stepType').addEventListener('change', renderStepFields);
+qs('#stepType').addEventListener('change', renderStepFields);
 
 function refreshPreview(){
-  $('#pvId').textContent = builder.id || 'py-??';
-  $('#pvTitle').textContent = builder.title || 'Атауы';
-  $('#pvLen').textContent = (builder.duration||0) + ' мин';
+  qs('#pvId').textContent = builder.id || 'py-??';
+  qs('#pvTitle').textContent = builder.title || 'Атауы';
+  qs('#pvLen').textContent = (builder.duration||0) + ' мин';
 
-  const list = $('#stepsList');
+  const list = qs('#stepsList');
   list.innerHTML = builder.steps.map((s, i)=> {
     if(s.type==='slide') return `<div class="item"><span class="badge">#${i+1} SLIDE</span> — ${s.title||''}</div>`;
     if(s.type==='quiz')  return `<div class="item"><span class="badge">#${i+1} QUIZ</span> — ${s.question?.slice(0,80)||''}</div>`;
@@ -66,55 +68,65 @@ function refreshPreview(){
 refreshPreview();
 
 // Қадам қосу
-$('#addStepBtn').addEventListener('click', ()=>{
-  const type = $('#stepType').value;
-  if(!builder.id) builder.id = $('#lessonId').value.trim();
-  builder.title = $('#lessonTitle').value.trim();
-  builder.duration = Number($('#lessonDuration').value||0);
+qs('#addStepBtn').addEventListener('click', ()=>{
+  const type = qs('#stepType').value;
+  if(!builder.id) builder.id = qs('#lessonId').value.trim();
+  builder.title = qs('#lessonTitle').value.trim();
+  builder.duration = Number(qs('#lessonDuration').value||0);
 
   if(!builder.id){ alert('Алдымен Сабақ ID енгізіңіз (мыс: py-01)'); return; }
 
   if(type==='slide'){
-    builder.steps.push({type:'slide', title: $('#f_title').value.trim(), src: $('#f_src').value.trim()});
+    builder.steps.push({type:'slide', title: qs('#f_title').value.trim(), src: qs('#f_src').value.trim()});
   }
   if(type==='quiz'){
-    const opts = $('#f_opts').value.split('\n').filter(Boolean);
+    const opts = qs('#f_opts').value.split('\n').filter(Boolean);
     builder.steps.push({
-      type:'quiz', id:`q${Date.now()}`, title: 'Тест', score:Number($('#f_score').value||1),
-      question: $('#f_question').value.trim(), options: opts, correct: Number($('#f_correct').value||0)
+      type:'quiz',
+      id:`q${Date.now()}`,
+      title: 'Тест',
+      score:Number(qs('#f_score').value||1),
+      question: qs('#f_question').value.trim(),
+      options: opts,
+      correct: Number(qs('#f_correct').value||0)
     });
   }
   if(type==='code'){
     builder.steps.push({
-      type:'code', id:`c${Date.now()}`, title: $('#f_title').value.trim(),
-      text: $('#f_text').value.trim(), template: $('#f_template').value,
-      sampleInput: $('#f_in').value, sampleOutput: $('#f_out').value, hint: $('#f_hint').value||''
+      type:'code', id:`c${Date.now()}`, title: qs('#f_title').value.trim(),
+      text: qs('#f_text').value.trim(), template: qs('#f_template').value,
+      sampleInput: qs('#f_in').value, sampleOutput: qs('#f_out').value, hint: qs('#f_hint').value||''
     });
   }
   if(type==='match'){
-    const left = $('#f_left').value.split('\n').filter(Boolean);
-    const right = $('#f_right').value.split('\n').filter(Boolean);
+    const left = qs('#f_left').value.split('\n').filter(Boolean);
+    const right = qs('#f_right').value.split('\n').filter(Boolean);
     const ans = {};
-    ($('#f_answer').value||'').split(',').map(x=>x.trim()).filter(Boolean).forEach(pair=>{
+    (qs('#f_answer').value||'').split(',').map(x=>x.trim()).filter(Boolean).forEach(pair=>{
       const [l,r]=pair.split(':').map(n=>Number(n.trim())); ans[l]=r;
     });
-    builder.steps.push({ type:'match', id:`m${Date.now()}`, title: $('#f_title').value.trim(),
-      left, right, answer: ans, score:Number($('#f_score').value||1) });
+    builder.steps.push({
+      type:'match',
+      id:`m${Date.now()}`,
+      title: qs('#f_title').value.trim(),
+      left, right, answer: ans,
+      score:Number(qs('#f_score').value||1)
+    });
   }
 
   refreshPreview();
 });
 
 // Қадамдарды тазалау
-$('#clearStepsBtn').addEventListener('click', ()=>{
+qs('#clearStepsBtn').addEventListener('click', ()=>{
   if(confirm('Барлық қадамды өшіреміз бе?')){ builder.steps=[]; refreshPreview(); }
 });
 
 // Сабақты сақтау (draft)
-$('#saveLessonBtn').addEventListener('click', ()=>{
-  builder.id = $('#lessonId').value.trim();
-  builder.title = $('#lessonTitle').value.trim();
-  builder.duration = Number($('#lessonDuration').value||0);
+qs('#saveLessonBtn').addEventListener('click', ()=>{
+  builder.id = qs('#lessonId').value.trim();
+  builder.title = qs('#lessonTitle').value.trim();
+  builder.duration = Number(qs('#lessonDuration').value||0);
   if(!builder.id){ alert('Сабақ ID керек'); return; }
 
   const store = loadJSON(KEY) || { currentCourseId: COURSE_ID, courses: { [COURSE_ID]: { title:'Python 0-ден', lessons: [] } } };
@@ -125,21 +137,22 @@ $('#saveLessonBtn').addEventListener('click', ()=>{
   else course.lessons.push(JSON.parse(JSON.stringify(builder)));
 
   saveJSON(KEY, store);
-  $('#saveInfo').textContent = new Date().toLocaleString();
+  qs('#saveInfo').textContent = new Date().toLocaleString();
   alert('Сақталды!');
   renderPublished();
 });
 
 // Publish (lesson.js пайдаланатын дерек)
-$('#publishBtn').addEventListener('click', ()=>{
-  const store = loadJSON(KEY); if(!store){ alert('Алдымен сақтаңыз'); return; }
+qs('#publishBtn').addEventListener('click', ()=>{
+  const store = loadJSON(KEY);
+  if(!store){ alert('Алдымен сақтаңыз'); return; }
   // Негізі publish бөлек керек емес — lesson.js cp_courses ішін бірден оқиды.
   alert('Жарияланды! Енді lesson.html осы деректерді автоматты алады.');
   renderPublished();
 });
 
 // Export / Import
-$('#exportBtn').addEventListener('click', ()=>{
+qs('#exportBtn').addEventListener('click', ()=>{
   const data = loadJSON(KEY) || {};
   const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
   const a = document.createElement('a');
@@ -148,7 +161,7 @@ $('#exportBtn').addEventListener('click', ()=>{
   a.click();
 });
 
-$('#importFile').addEventListener('change', async (e)=>{
+qs('#importFile').addEventListener('change', async (e)=>{
   const f = e.target.files[0]; if(!f) return;
   const txt = await f.text();
   try{
@@ -162,16 +175,16 @@ $('#importFile').addEventListener('change', async (e)=>{
 // Published күйін көрсету
 function renderPublished(){
   const data = loadJSON(KEY) || {};
-  $('#jsonView').textContent = JSON.stringify(data, null, 2);
+  qs('#jsonView').textContent = JSON.stringify(data, null, 2);
 }
 renderPublished();
 
 // Бастапқы өрістерді превьюмен синхрондау
 ['lessonId','lessonTitle','lessonDuration'].forEach(id=>{
-  $('#'+id).addEventListener('input', ()=>{
-    if(id==='lessonId') builder.id = $('#lessonId').value.trim();
-    if(id==='lessonTitle') builder.title = $('#lessonTitle').value.trim();
-    if(id==='lessonDuration') builder.duration = Number($('#lessonDuration').value||0);
+  qs('#'+id).addEventListener('input', ()=>{
+    if(id==='lessonId') builder.id = qs('#lessonId').value.trim();
+    if(id==='lessonTitle') builder.title = qs('#lessonTitle').value.trim();
+    if(id==='lessonDuration') builder.duration = Number(qs('#lessonDuration').value||0);
     refreshPreview();
   });
 });
