@@ -1,35 +1,19 @@
 // ================== helpers ==================
 const $ = s => document.querySelector(s);
 
-// storage (cp_courses тек осында)
-function getStore(){
-  try{
-    return JSON.parse(localStorage.getItem('cp_courses')||'{}');
-  }catch(_){
-    return {};
-  }
-}
-
+// storage
+function getStore(){ try{ return JSON.parse(localStorage.getItem('cp_courses')||'{}'); }catch(_){ return {}; } }
 function setStore(x){
   try{
     localStorage.setItem('cp_courses', JSON.stringify(x));
   }catch(e){
     console.error(e);
-    alert(
-      'Сақтау мүмкін емес: браузердің localStorage жадысы толып кетті. ' +
-      'Кейбір ескі сабақтарды немесе үлкен суреттерді өшіру керек.'
-    );
-  }
-
-  // 🔥 Firebase-ке де жазамыз (бар болса)
-  if (window.cpFirebase && typeof window.cpFirebase.write === 'function') {
-    window.cpFirebase.write('cp_courses', x).catch(err=>{
-      console.error('Firebase write failed:', err);
-    });
+    alert('Сақтау мүмкін емес: браузердің localStorage жадысы толып кетті. '
+      + 'Кейбір ескі сабақтарды немесе үлкен суреттерді өшіру керек.');
   }
 }
 
-const COURSE_ID = (getStore().currentCourseId) || 'python-0';
+const COURSE_ID = (getStore().currentCourseId)||'python-0';
 
 function listLessons(){
   const s = getStore();
@@ -38,9 +22,18 @@ function listLessons(){
 function saveLessons(lessons){
   const s = getStore();
   s.courses = s.courses || {};
-  s.courses[COURSE_ID] = s.courses[COURSE_ID] || { title:'Python 0-ден', lessons:[] };
+  s.courses[COURSE_ID] = s.courses[COURSE_ID] || {title:'Python 0-ден', lessons:[]};
   s.courses[COURSE_ID].lessons = lessons;
-  setStore(s);   // setStore өзі Firebase-ке де жазады
+  setStore(s);
+
+  // 🔁 Firebase-пен синхронизация (егер firebase-config.js қосылған болса)
+  if (window.saveCoursesToFirebase) {
+    try{
+      window.saveCoursesToFirebase();
+    }catch(err){
+      console.error('Firebase-ке сақтау кезінде қате:', err);
+    }
+  }
 }
 
 // ================== modals ==================
@@ -100,9 +93,10 @@ function ensureDefaults(st){
 
   } else if (st.type==='quiz'){
     // ---- QUIZ defaults + сурет қолдауы (ЖОЛ ретінде) ----
+    // сұрақ суреті: мысалы "img/q1.png"
     st.questionImg = st.questionImg || '';
 
-    // options: әр элемент { text, img }
+    // options: әр элемент { text, img } (img — файл жолы: "img/q1_opt1.png")
     if (!Array.isArray(st.options)) st.options = [];
     st.options = st.options.map(o=>{
       if (typeof o === 'string') return { text:o, img:'' };
@@ -151,6 +145,7 @@ function slideEditor(i, st){
 
 // ---- quizEditor ----
 function quizEditor(i, st){
+  // st.options: [{text, img}]  (img — реподағы сурет файлының жолы)
   const options = (st.options||[]).map((o,oi)=>`
     <div class="quiz-option-row" style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
       <input type="radio" name="quiz-correct-${i}" ${st.answer===oi?'checked':''}
@@ -188,14 +183,11 @@ function quizEditor(i, st){
       <label>Жауап нұсқалары</label>
       <div>${options}</div>
       <div><button class="btn ghost add-option" data-idx="${i}">+ Нұсқа қосу</button></div>
-      <div class="muted">
-        Дұрыс жауап ретінде бір радио-батырманы таңдаңыз.
-        Сурет жолдары реподағы файлдарға сілтесін (мыс: img/quiz1_opt1.png).
-      </div>
+      <div class="muted">Дұрыс жауап ретінде бір радио-батырманы таңдаңыз. Сурет жолдары реподағы файлдарға сілтесін (мыс: img/quiz1_opt1.png).</div>
     </div>`;
 }
 
-// ---- codeEditor ----
+// ---- codeEditor (есеп мәтіні + көпжолды тест кірісі) ----
 function codeEditor(i, st){
   const tests = (st.tests||[]).map((t,ti)=>`
     <div class="card" style="margin:6px 0">
@@ -228,7 +220,7 @@ function codeEditor(i, st){
     <div class="row">
       <label>Бастапқы код (template)</label>
       <textarea class="step-input" data-idx="${i}" data-field="template"
-                style="min-height:100px;padding:10px;border:1px solid #e2e8f0;border-radius:10px">${st.template||''}</textarea>
+                style="min-height:100px;padding:10px;border:1px солid #e2e8f0;border-radius:10px">${st.template||''}</textarea>
     </div>
     <div class="row">
       <label>Тесттер</label>
@@ -309,7 +301,7 @@ stepsEl?.addEventListener('input', (e)=>{
   const idx = Number(stepBox.dataset.idx);
   const st = ensureDefaults(cur.steps[idx]);
 
-  // универсалды өріс
+  // универсалды өріс (title, src, question, template, text, questionImg)
   if(e.target.classList.contains('step-input')){
     const field = e.target.dataset.field;
     st[field] = e.target.value;
@@ -322,7 +314,7 @@ stepsEl?.addEventListener('input', (e)=>{
     st.options[oi].text = e.target.value;
   }
 
-  // quiz option image PATH
+  // quiz option image PATH (мыс: img/q1_opt1.png)
   if(e.target.classList.contains('opt-img')){
     const oi = Number(e.target.dataset.oi);
     if (!st.options[oi]) st.options[oi] = {text:'',img:''};
@@ -352,6 +344,8 @@ stepsEl?.addEventListener('input', (e)=>{
   cur.steps[idx] = st;
   window.__editingLesson__ = cur;
 });
+
+// change listener енді керек емес (файл жүктеу жоқ), сондықтан қоспаймыз
 
 stepsEl?.addEventListener('click', (e)=>{
   const cur = window.__editingLesson__ || emptyLesson();
@@ -453,6 +447,7 @@ document.getElementById('lessonsTable')?.addEventListener('click', (e)=>{
 
   if(edit){
     window.__editingLesson__ = JSON.parse(JSON.stringify(lessons[idx]));
+    // defaults into each step
     window.__editingLesson__.steps = (window.__editingLesson__.steps||[]).map(ensureDefaults);
     fillLessonForm(window.__editingLesson__);
     openPanel('lessonPanel');
@@ -477,13 +472,7 @@ $('#saveLesson')?.addEventListener('click', ()=>{
 });
 
 // ================== ratings (simple) ==================
-function loadUsers(){
-  try{
-    return JSON.parse(localStorage.getItem('cp_users')||'[]');
-  }catch(_){
-    return [];
-  }
-}
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem('cp_users')||'[]'); }catch(_){ return []; } }
 function userStepsDone(userEmail, lessonId){
   try{
     const key = `cp_steps__${userEmail}__${lessonId}`;
@@ -522,37 +511,18 @@ $('#btnRatings')?.addEventListener('click', ()=>{
   openPanel('ratingsPanel');
 });
 
+// 🔁 Firebase cp_courses_ready болғанда кестені қайта салу
+window.addEventListener('cp_courses_ready', ()=>{
+  console.log('[admin] cp_courses_ready → renderLessonsTable()');
+  renderLessonsTable();
+});
+
 // ================== init ==================
 document.addEventListener('DOMContentLoaded', ()=>{
-  // Алдымен Firebase-тен cp_courses алып көрейік
-  if (window.cpFirebase && typeof window.cpFirebase.readOnce === 'function') {
-    window.cpFirebase.readOnce('cp_courses')
-      .then(snap=>{
-        const data = snap.val();
-        if (data) {
-          // Firebase-тегі деректі localStorage-қа құямыз
-          setStore(data);
-        }
-        renderLessonsTable();
-        console.log('[admin ready via Firebase]',
-          !!$('#btnAddLesson'),
-          !!($('#lessonPanel')),
-          !!($('#backdrop'))
-        );
-      })
-      .catch(err=>{
-        console.error('Firebase load failed:', err);
-        // Firebase істемесе, localStorage-тан ғана оқимыз
-        renderLessonsTable();
-        console.log('[admin ready fallback localStorage]');
-      });
-  } else {
-    // Firebase қосылмаса — ескі режим
-    renderLessonsTable();
-    console.log('[admin ready no Firebase]',
-      !!$('#btnAddLesson'),
-      !!($('#lessonPanel')),
-      !!($('#backdrop'))
-    );
-  }
+  renderLessonsTable();
+  console.log('[admin ready]',
+    !!$('#btnAddLesson'),
+    !!($('#lessonPanel')),
+    !!($('#backdrop'))
+  );
 });
