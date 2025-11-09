@@ -5,9 +5,8 @@
   const params = new URLSearchParams(location.search);
   const LID = params.get('lesson') || 'py-01';
   try{
-    // 🔧 1) Алдымен Firebase-тен келген глобалды объектіні қолданамыз
-    const root   = window.CP_COURSES || JSON.parse(localStorage.getItem('cp_courses')||'null');
-    const course = root && root.courses && root.courses['python-0'];
+    const store  = JSON.parse(localStorage.getItem('cp_courses')||'null');
+    const course = store && store.courses && store.courses['python-0'];
     if(!course) return;
     const lessons = course.lessons || [];
     const found   = lessons.find(l=>l.id===LID);
@@ -84,11 +83,11 @@ const STEPS_DEFAULT = [
 ];
 
 // ---- 3) DYNAMIC adopt
-const LESSON_ORDER = (window.LESSON_ORDER && window.LESSON_ORDER.length)
+let LESSON_ORDER = (window.LESSON_ORDER && window.LESSON_ORDER.length)
   ? window.LESSON_ORDER
   : LESSON_ORDER_DEFAULT;
 
-const STEPS = (window.STEPS && window.STEPS.length)
+let STEPS = (window.STEPS && window.STEPS.length)
   ? window.STEPS
   : STEPS_DEFAULT;
 
@@ -557,5 +556,47 @@ function attachEvents(){
 
 // ---- 9) Kick off
 render();
+
+// ---- 10) Firebase cp_courses жаңарғанда (басқа құрылғыдан сабақ өзгерсе)
+window.addEventListener('cp_courses_ready', ()=>{
+  try{
+    const params = new URLSearchParams(location.search);
+    const LID = params.get('lesson') || 'py-01';
+
+    const store  = JSON.parse(localStorage.getItem('cp_courses')||'null');
+    const course = store && store.courses && store.courses['python-0'];
+    if(!course) return;
+    const lessons = course.lessons || [];
+    const found   = lessons.find(l=>l.id===LID);
+    if(!found || !Array.isArray(found.steps) || !found.steps.length) return;
+
+    // Глобалдарға жазамыз
+    window.STEPS        = found.steps;
+    window.LESSON_ORDER = lessons.map(l=>l.id);
+
+    // Локал LESSON_ORDER / STEPS-ті да жаңартамыз
+    LESSON_ORDER = (window.LESSON_ORDER && window.LESSON_ORDER.length)
+      ? window.LESSON_ORDER
+      : LESSON_ORDER_DEFAULT;
+
+    STEPS = (window.STEPS && window.STEPS.length)
+      ? window.STEPS
+      : STEPS_DEFAULT;
+
+    // Прогресс totalSteps жаңарту
+    if(!COURSE.lessons[LESSON_ID]){
+      COURSE.lessons[LESSON_ID] = { completedSteps:0, totalSteps:STEPS.length };
+    } else {
+      COURSE.lessons[LESSON_ID].totalSteps = STEPS.length;
+    }
+    saveJSON(courseKey(USER), COURSE);
+
+    // Индексті қайта есептеп, қайта рендер
+    IDX = Math.min(STEPSTATE.completed.length, Math.max(0, STEPS.length-1));
+    render();
+  }catch(e){
+    console.error('[lesson] cp_courses_ready error', e);
+  }
+});
 
 // ===================== end of LESSON.JS =====================
