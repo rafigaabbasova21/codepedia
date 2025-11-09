@@ -5,8 +5,9 @@
   const params = new URLSearchParams(location.search);
   const LID = params.get('lesson') || 'py-01';
   try{
-    const store  = JSON.parse(localStorage.getItem('cp_courses')||'null');
-    const course = store && store.courses && store.courses['python-0'];
+    // 🔧 1) Алдымен Firebase-тен келген глобалды объектіні қолданамыз
+    const root   = window.CP_COURSES || JSON.parse(localStorage.getItem('cp_courses')||'null');
+    const course = root && root.courses && root.courses['python-0'];
     if(!course) return;
     const lessons = course.lessons || [];
     const found   = lessons.find(l=>l.id===LID);
@@ -179,106 +180,104 @@ function render(){
       <div class="step-actions"><button id="nextBtn" class="btn primary">${labelNext}</button></div>`;
   }
 
-// ---- QUIZ (бір мүмкіндік) + суреттер ----
-if (st.type === "quiz") {
-  const qid = quizStorageId(st, IDX);
-  const locked = !!localStorage.getItem(quizKey(USER, LESSON_ID, qid));
-  const savedSel = localStorage.getItem(quizSelKey(USER, LESSON_ID, qid));
+  // ---- QUIZ (бір мүмкіндік) + суреттер ----
+  if (st.type === "quiz") {
+    const qid = quizStorageId(st, IDX);
+    const locked = !!localStorage.getItem(quizKey(USER, LESSON_ID, qid));
+    const savedSel = localStorage.getItem(quizSelKey(USER, LESSON_ID, qid));
 
-  // options массивін {text,img} формасына келтіреміз
-  const opts = (st.options || []).map(o => {
-    if (typeof o === "string") return { text: o, img: "" };
-    return { text: (o && o.text) || "", img: (o && o.img) || "" };
-  });
+    // options массивін {text,img} формасына келтіреміз
+    const opts = (st.options || []).map(o => {
+      if (typeof o === "string") return { text: o, img: "" };
+      return { text: (o && o.text) || "", img: (o && o.img) || "" };
+    });
 
-  const labelNext = IDX === STEPS.length - 1 ? "Келесі тақырып" : "Келесі";
+    const labelNext = IDX === STEPS.length - 1 ? "Келесі тақырып" : "Келесі";
 
-  html = `
-    <h2 class="step-title">${st.title || ""}</h2>
-    <p class="note"><strong>Ереже:</strong> бір мүмкіндік. Таңдағаннан соң өзгермейді.</p>
+    html = `
+      <h2 class="step-title">${st.title || ""}</h2>
+      <p class="note"><strong>Ереже:</strong> бір мүмкіндік. Таңдағаннан соң өзгермейді.</p>
 
-    <p><strong>Сұрақ:</strong> ${st.question || ""}</p>
+      <p><strong>Сұрақ:</strong> ${st.question || ""}</p>
 
-    ${st.questionImg
-      ? `<div class="quiz-question-img-wrap">
-           <img src="${st.questionImg}" class="quiz-question-img" alt="">
-         </div>`
-      : ""}
+      ${st.questionImg
+        ? `<div class="quiz-question-img-wrap">
+             <img src="${st.questionImg}" class="quiz-question-img" alt="">
+           </div>`
+        : ""}
 
-    <ul class="quiz-list" role="radiogroup">
-      ${opts
-        .map((o, i) => {
-          const ck  = String(i) === savedSel ? 'aria-checked="true"' : "";
-          const dis = locked ? 'aria-disabled="true"' : "";
-          return `
-            <li class="quiz-option" role="radio" data-idx="${i}" ${ck} ${dis}>
-              <div class="quiz-option-inner">
-              <span class="quiz-option-text">${o.text || ""}</span>
-                ${o.img ? `<img src="${o.img}" class="quiz-option-img" alt="">` : ""}
-              </div>
-            </li>`;
+      <ul class="quiz-list" role="radiogroup">
+        ${opts
+          .map((o, i) => {
+            const ck  = String(i) === savedSel ? 'aria-checked="true"' : "";
+            const dis = locked ? 'aria-disabled="true"' : "";
+            return `
+              <li class="quiz-option" role="radio" data-idx="${i}" ${ck} ${dis}>
+                <div class="quiz-option-inner">
+                  <span class="quiz-option-text">${o.text || ""}</span>
+                  ${o.img ? `<img src="${o.img}" class="quiz-option-img" alt="">` : ""}
+                </div>
+              </li>`;
+          })
+          .join("")}
+      </ul>
 
-            
-        })
-        .join("")}
-    </ul>
-
-    <div class="quiz-result" id="quizResult">
-      ${locked ? "Жауап сақталды. Келесіге өтіңіз." : ""}
-    </div>
-    <div class="step-actions">
-      <button id="nextBtn" class="btn primary" ${locked ? "" : "disabled"}>
-        ${labelNext}
-      </button>
-    </div>`;
-}
-
-if (st.type === 'code') {
-  const hasTests  = Array.isArray(st.tests) && st.tests.length > 0;
-  const sampleIn  = hasTests ? (st.tests[0].in  || '') : (st.sampleInput  || '');
-  const sampleOut = hasTests ? (st.tests[0].out || '') : (st.sampleOutput || '');
-  const hintText  = st.hint || '';
-  const taskText  = st.text || 'Тапсырма шарты көрсетілмеген.';
-
-  html = `
-    <h2 class="step-title">${st.title || ''}</h2>
-    <p class="note">${taskText}</p>
-
-    <div class="code-grid">
-      <div>
-        <textarea id="code" class="code-area" spellcheck="false">${st.template || ''}</textarea>
-        <div class="hint">${hintText}</div>
+      <div class="quiz-result" id="quizResult">
+        ${locked ? "Жауап сақталды. Келесіге өтіңіз." : ""}
       </div>
+      <div class="step-actions">
+        <button id="nextBtn" class="btn primary" ${locked ? "" : "disabled"}>
+          ${labelNext}
+        </button>
+      </div>`;
+  }
 
-      <div>
-        <label class="badge">Input</label>
-        <textarea id="stdin" class="io-area" placeholder="${sampleIn}">${sampleIn}</textarea>
+  if (st.type === 'code') {
+    const hasTests  = Array.isArray(st.tests) && st.tests.length > 0;
+    const sampleIn  = hasTests ? (st.tests[0].in  || '') : (st.sampleInput  || '');
+    const sampleOut = hasTests ? (st.tests[0].out || '') : (st.sampleOutput || '');
+    const hintText  = st.hint || '';
+    const taskText  = st.text || 'Тапсырма шарты көрсетілмеген.';
 
-        <label class="badge" style="margin-top:8px;display:inline-block">Күтілетін Output</label>
-        <pre id="expected" class="io-area out">${sampleOut}</pre>
+    html = `
+      <h2 class="step-title">${st.title || ''}</h2>
+      <p class="note">${taskText}</p>
 
-        <label class="badge" style="margin-top:8px;display:inline-block">Нәтиже</label>
-        <pre id="actual" class="io-area out"></pre>
+      <div class="code-grid">
+        <div>
+          <textarea id="code" class="code-area" spellcheck="false">${st.template || ''}</textarea>
+          <div class="hint">${hintText}</div>
+        </div>
 
-        <div id="manualWrap" style="display:none;margin-top:8px">
-          <label class="badge">Қолмен тексеру</label>
-          <input id="manualOut" class="io-area" style="min-height:auto;height:44px" placeholder="Осында өз нәтижеңді жаз">
-          <div id="codeFeedback" class="note" style="margin-top:8px"></div>
-          <small class="hint">Компилятор жауап бермесе, өз нәтижеңді енгіз. Дұрыс болса ұпай беріледі.</small>
+        <div>
+          <label class="badge">Input</label>
+          <textarea id="stdin" class="io-area" placeholder="${sampleIn}">${sampleIn}</textarea>
+
+          <label class="badge" style="margin-top:8px;display:inline-block">Күтілетін Output</label>
+          <pre id="expected" class="io-area out">${sampleOut}</pre>
+
+          <label class="badge" style="margin-top:8px;display:inline-block">Нәтиже</label>
+          <pre id="actual" class="io-area out"></pre>
+
+          <div id="manualWrap" style="display:none;margin-top:8px">
+            <label class="badge">Қолмен тексеру</label>
+            <input id="manualOut" class="io-area" style="min-height:auto;height:44px" placeholder="Осында өз нәтижеңді жаз">
+            <div id="codeFeedback" class="note" style="margin-top:8px"></div>
+            <small class="hint">Компилятор жауап бермесе, өз нәтижеңді енгіз. Дұрыс болса ұпай беріледі.</small>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="step-actions">
-      <button class="btn ghost" id="runBtn">Іске қосу</button>
-      <button class="btn primary" id="submitBtn" disabled>Жіберу</button>
-      <button class="btn primary" id="nextBtn" disabled>${labelNext}</button>
-      <button class="btn ghost" id="skipBtn">Өткізу (0 балл)</button>
-    </div>
+      <div class="step-actions">
+        <button class="btn ghost" id="runBtn">Іске қосу</button>
+        <button class="btn primary" id="submitBtn" disabled>Жіберу</button>
+        <button class="btn primary" id="nextBtn" disabled>${labelNext}</button>
+        <button class="btn ghost" id="skipBtn">Өткізу (0 балл)</button>
+      </div>
 
-    <iframe src="compiler2.html" id="runner" style="width:0;height:0;border:0;visibility:hidden"></iframe>
-  `;
-}
+      <iframe src="compiler2.html" id="runner" style="width:0;height:0;border:0;visibility:hidden"></iframe>
+    `;
+  }
 
   if (st.type === 'match') {
     // pairs[] не left/right
