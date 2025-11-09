@@ -1,0 +1,63 @@
+/* Hero блок */
+.hero{
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  padding: 32px 40px;
+  min-height: 220px;
+  background: linear-gradient(120deg,#2f80ed 0%, #06b6d4 100%);
+  box-shadow: 0 10px 30px rgba(2,30,84,.12);
+}
+
+/* Иллюстрация: бастапқыда жартылай көрінеді */
+.hero-ill{
+  position: absolute;
+  right: 24px;
+  bottom: -6px;
+  width: 320px;          /* қажетіне қарай */
+  max-width: 36%;
+  opacity: .28;
+  transform: scale(.9);
+  transition: 
+    opacity .35s ease,
+    transform .6s cubic-bezier(.2,.8,.2,1),
+    filter .35s ease;
+  pointer-events: none;  /* батырмаларды жаппау үшін */
+  filter: saturate(.9);
+}
+
+/* Hover кезінде толық көрініп, үлкейеді */
+.hero:hover .hero-ill,
+.hero:focus-within .hero-ill{
+  opacity: 1;
+  transform: scale(1.06);
+  filter: saturate(1) drop-shadow(0 14px 30px rgba(0,0,0,.18));
+}
+
+/* Мобильде тым жарқырап кетпесін */
+@media (max-width: 900px){
+  .hero-ill{
+    opacity: .45;
+    transform: scale(.95);
+    right: 10px;
+    width: 240px;
+    max-width: 40%;
+  }
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  right: 24px; bottom: -6px;
+  width: 320px; height: 320px;
+  background: url("img/hero_mascot.png") no-repeat center/contain;
+  opacity:.28; transform: scale(.9);
+  transition: opacity .35s ease, transform .6s cubic-bezier(.2,.8,.2,1), filter .35s ease;
+  filter: saturate(.9);
+  pointer-events:none;
+}
+.hero:hover::after,
+.hero:focus-within::after{
+  opacity:1; transform: scale(1.06);
+  filter: saturate(1) drop-shadow(0 14px 30px rgba(0,0,0,.18));
+}

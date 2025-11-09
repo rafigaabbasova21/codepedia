@@ -1,0 +1,13 @@
+
+/* Topics page specifics */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width: 980px){ .grid{grid-template-columns:repeat(2,1fr)} } @media (max-width: 640px){ .grid{grid-template-columns:1fr} }
+.card.topic{overflow:hidden;display:flex;flex-direction:column}
+.cover{height:160px;background:#e2e8f0;position:relative;overflow:hidden}
+.cover img{width:100%;height:100%;object-fit:cover}
+.badge.abs{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.9);border:1px solid var(--border)}
+.content{padding:14px}.title{font-weight:800;margin:0 0 4px 0}.small{font-size:12px;color:#64748b}
+.footer{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-top:1px solid var(--border)}
+.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border:none;box-shadow:0 10px 22px rgba(37,99,235,.25)}
+.btn.locked{background:#e5e7eb;border-color:#cbd5e1;color:#64748b;cursor:not-allowed}
+.status{font-weight:700}.ok{color:#059669}.fail{color:#dc2626}

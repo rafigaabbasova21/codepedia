@@ -1,0 +1,174 @@
+:root{--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;--grad1:#2563eb;--grad2:#06b6d4;--radius:20px}
+body{background:var(--bg);color:var(--text)}
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
+.lesson-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.crumbs{font-size:13px;color:var(--muted)}
+.title{font-weight:800;font-size:28px;margin:8px 0}
+.bar{display:flex;align-items:center;gap:12px;margin:6px 0 12px}
+.progress{flex:1;height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--grad1),var(--grad2));width:0;transition:width .45s}
+.score-pill{padding:4px 10px;border-radius:999px;background:#ecfeff;border:1px solid #bae6fd;color:#0369a1;font-weight:700;font-size:12px}
+
+.stepbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.stepdot{min-width:32px;height:32px;border-radius:999px;background:#eef2f7;color:#334155;display:grid;place-items:center;font-size:12px;font-weight:800;border:1px solid #e2e8f0}
+.stepdot.active{background:linear-gradient(90deg,var(--grad1),var(--grad2));color:#fff;box-shadow:0 8px 18px rgba(37,99,235,.25)}
+.stepdot.done{background:#22c55e;color:#fff;border-color:#16a34a}
+
+.step-card{background:var(--card);border:1px solid #eef2f7;border-radius:var(--radius);box-shadow:0 8px 24px rgba(15,23,42,.06);padding:18px}
+.step-title{margin:0 0 10px;font-size:22px}
+.step-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.btn{appearance:none;border:0;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer}
+.btn.primary{background:linear-gradient(90deg,var(--grad1),var(--grad2));color:#fff}
+.btn.ghost{background:#fff;border:1px solid #e2e8f0}
+.note{font-size:13px;color:#475569}
+
+/* Slides */
+.slide-embed{width:100%;height:480px;border:0;display:block;border-radius:14px;background:#0b1020}
+
+/* ======================== QUIZ ======================== */
+
+.quiz-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  display: grid;
+  gap: 10px;
+}
+
+/* Карта түріндегі опция */
+.quiz-option {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  padding: 16px 14px;
+  margin: 8px 0;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: all 0.25s ease;
+}
+
+.quiz-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(37,99,235,0.12);
+}
+
+/* Белгіленген / блокталған күйі */
+.quiz-option[aria-checked="true"] {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.25);
+}
+
+.quiz-option[aria-disabled="true"] {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* Ішкі құрылым: мәтін үстінде, сурет астында */
+.quiz-option-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+/* Опция мәтіні */
+.quiz-option-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Сурет – жауаптың ТӨМЕНГІ жағында, өз өлшемінде.*/
+.quiz-option-img-below {
+  display: block;
+  margin-top: 8px;
+  margin-left: auto;
+  margin-right: auto;
+
+  max-width: 260px;    /* ← Осы жерден өлшемді басқарасың */
+  height: auto;
+
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease;
+}
+
+.quiz-option:hover .quiz-option-img-below {
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(37,99,235,0.15);
+}
+
+
+/* Нәтиже мәтіні */
+.quiz-result {
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Сұрақтың суреті – үстінде, ортада */
+.quiz-question-img-wrap {
+  text-align: left;
+  margin: 16px 0 20px;
+}
+
+
+.quiz-question-img {
+  display: inline-block;
+  max-width: 480px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+/* ======================== CODE / BUTTON / MATCH – бұрынғың ======================== */
+
+/* Code */
+.code-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.code-area{width:100%;min-height:260px;border:1px solid #e2e8f0;border-radius:12px;padding:10px;font-family:ui-monospace,Consolas,Menlo,monospace}
+.io-area{width:100%;min-height:120px;border:1px dashed #cbd5e1;border-radius:12px;padding:10px}
+.out{background:#0b1020;color:#e2e8f0}
+.hint{font-size:13px;color:#64748b;margin-top:6px}
+@media(max-width:900px){.code-grid{grid-template-columns:1fr}}
+
+/* Батырмалар */
+.btn { border:0; border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer }
+.btn.primary { background:linear-gradient(90deg,#2563eb,#06b6d4); color:#fff }
+.btn.ghost   { background:#fff; border:1px solid #cbd5e1; color:#0f172a }
+.btn:hover   { filter:brightness(1.03) }
+.btn[disabled]{
+  opacity:.5 !important;
+  cursor:not-allowed !important;
+  filter:none !important;
+}
+
+/* Match */
+.match-wrap{ display:flex; flex-direction:column; gap:10px; }
+.match-row{ display:flex; align-items:center; gap:12px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:12px; }
+.match-left{ flex:1; font-weight:600; color:#0f172a; }
+.match-right select{ width:260px; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:#fff; }
+.match-actions{ display:flex; align-items:center; margin-top:6px; }
+.match-select.ok{ border-color:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.15); }
+.match-select.bad{ border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.12); }
+
+
+/* ===== QUIZ сурет өлшемін мәжбүрлі түрде өзгерту ===== */
+.quiz-option img {
+  display: block !important;
+  margin: 10px auto !important;
+  max-width: 240px !important;   /* ← өлшемді осы жерден өзгерт */
+  height: auto !important;
+  border-radius: 12px !important;
+  object-fit: contain !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}

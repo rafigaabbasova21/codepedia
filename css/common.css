@@ -1,0 +1,267 @@
+
+:root{
+  --bg:#f8fafc; --panel:#ffffff; --muted:#475569; --text:#0f172a;
+  --brand:#2563eb; --brand-2:#06b6d4; --border: rgba(15,23,42,.08);
+  --shadow: 0 10px 30px rgba(15,23,42,.10); --radius:20px;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+/* Header */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.85));
+  border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;padding:12px 18px}
+.menu-btn{width:42px;height:42px;border-radius:14px;border:1px solid var(--border);
+  background:#fff;box-shadow:var(--shadow);cursor:pointer;display:grid;place-items:center;transition:.2s}
+.menu-btn:hover{transform:translateY(-2px)}
+.menu-lines{width:22px;height:16px;display:grid;gap:5px}
+.menu-lines span{display:block;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));border-radius:4px}
+.brand{display:flex;align-items:center;gap:10px;margin-left:4px;text-decoration:none}
+.brand-badge{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;font-weight:800;
+  box-shadow:0 10px 22px rgba(37,99,235,.25)}
+.brand-title{font-weight:800;letter-spacing:.3px;font-size:18px;color:var(--text)}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.user-pill{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
+.user-pill .avatar{width:28px;height:28px;border-radius:50%;background:#e2e8f0;background-size:cover;background-position:center}
+.btn{padding:9px 12px;border-radius:12px;border:1px solid var(--border);cursor:pointer;background:#fff;font-weight:700}
+.btn.danger{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+
+/* Sidebar */
+.sidebar-wrap{position:fixed;inset:0 auto 0 0;width:300px;transform:translateX(-320px);
+  transition:transform .35s ease;z-index:60;padding:16px}
+.sidebar-wrap.open{transform:translateX(0)}
+.sidebar{height:100%;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#0f172a,#111827);
+  color:#e5e7eb;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 48px rgba(0,0,0,.35);padding:16px}
+.nav{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;color:#e5e7eb;text-decoration:none;transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.06);transform:translateX(2px)}
+.nav a.active{background:rgba(37,99,235,.25);border:1px solid rgba(59,130,246,.35)}
+.sidebar-footer{margin-top:auto;padding:10px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.scrim{position:fixed;inset:0;background:rgba(15,23,42,.35);opacity:0;pointer-events:none;transition:.2s;z-index:55}
+.scrim.visible{opacity:1;pointer-events:auto}
+
+/* Containers/Cards */
+.container{max-width:1200px;margin:20px auto;padding:0 16px;display:grid;gap:18px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.35);color:#0f172a}
+.muted{color:var(--muted)}
+.letters-bar{display:flex;align-items:center;gap:8px;overflow:auto;scrollbar-width:thin;padding:8px 2px;flex-wrap:wrap}
+.letter-chip{min-width:38px;text-align:center;padding:10px 12px;background:#e2e8f0;border:1px solid var(--border);border-radius:16px;font-weight:800;color:var(--text);transition:.15s}
+.letter-chip:hover{transform:translateY(-2px);background:#dbeafe;border-color:#bfdbfe}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width: 900px){ .grid-2{grid-template-columns:1fr} }
+
+/* ==== HERO CTA ==== */
+.hero-cta {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  border-radius: 22px;
+  min-height: 200px;
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 40%, #06b6d4 100%);
+  color: #fff;
+  box-shadow: 0 14px 40px rgba(37, 99, 235, .18);
+  isolation: isolate;
+}
+
+.hero-cta__content {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 24px;
+  align-items: center;
+}
+
+@media (max-width: 920px) {
+  .hero-cta__content { grid-template-columns: 1fr; }
+}
+
+.hero-cta__title {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: .2px;
+}
+.hero-cta__subtitle { 
+  margin: 0 0 16px 0; 
+  color: rgba(255,255,255,.9);
+}
+
+.hero-cta__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Ақ батырма */
+.btn.white {
+  background:#fff; color:#0f172a;
+  border: none;
+}
+.btn.white:hover { transform: translateY(-2px); }
+
+/* Мөлдір ақ контурлы */
+.btn.ghost {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,.9);
+  color: #fff;
+}
+.btn.ghost:hover { background: rgba(255,255,255,.08); transform: translateY(-2px); }
+
+/* Артқы аним фон (жұмсақ “блобтар”) */
+.hero-cta__bg::before,
+.hero-cta__bg::after {
+  content: "";
+  position: absolute; inset: -20% -10% auto auto;
+  width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.35), rgba(255,255,255,0) 60%);
+  filter: blur(8px);
+  animation: blob 14s ease-in-out infinite;
+  z-index: -1;
+}
+.hero-cta__bg::after {
+  inset: auto auto -25% -15%;
+  width: 520px; height: 520px;
+  animation-duration: 18s;
+  opacity: .8;
+}
+@keyframes blob {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(-30px, 20px) scale(1.05); }
+  66%  { transform: translate(20px, -25px) scale(0.95); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+/* Иллюстрация орны (анимациямен және жарық эффектімен) */
+.hero-cta__art { 
+  justify-self: end; 
+  width: 260px; 
+  height: 200px;
+  background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0));
+  border-radius: 20px;
+  backdrop-filter: blur(2px);
+  mask-image: radial-gradient(circle at 80% 20%, rgba(0,0,0,.9), rgba(0,0,0,0) 70%);
+  position: relative;
+  overflow: hidden;
+  transition: transform .6s cubic-bezier(.2,.8,.2,1), 
+              box-shadow .4s ease, 
+              mask-image .5s ease;
+}
+
+/* Shine эффекті — жарық сызық сырғып өтеді */
+.hero-cta__art::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(75deg, transparent 45%, rgba(255,255,255,.25) 50%, transparent 55%);
+  transform: translateX(-120%) rotate(8deg);
+  transition: transform .9s ease;
+  pointer-events: none;
+}
+.hero-cta__art:hover::after {
+  transform: translateX(120%) rotate(8deg);
+}
+
+/* Суреттің негізгі стилі */
+.hero-cta__art img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain;
+  opacity: 0.55;              /* сәл айқынырақ болсын */
+  transform: scale(0.92) translateY(4px);
+  transition: 
+    opacity .5s ease,
+    transform .6s cubic-bezier(.2,.8,.2,1),
+    filter .5s ease;
+  filter: saturate(.95);
+  animation: heroFloat 6s ease-in-out infinite alternate; /* тыныс алу эффекті */
+}
+
+/* Hover кезінде — анық көрініп, сәл үлкейеді */
+.hero-cta__art:hover img {
+  opacity: 1;
+  transform: scale(1.10) translateY(-2px);
+  filter: saturate(1.1) drop-shadow(0 14px 26px rgba(0,0,0,0.18));
+}
+
+/* Hover кезінде блок та аздап көтеріледі */
+.hero-cta__art:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.12);
+  mask-image: radial-gradient(circle at 75% 25%, rgba(0,0,0,1), rgba(0,0,0,0) 95%);
+}
+
+/* Үздіксіз “жүзу” анимациясы */
+@keyframes heroFloat {
+  from { transform: scale(0.92) translateY(6px); }
+  to   { transform: scale(0.95) translateY(-6px); }
+}
+
+/* Анимация сезімтал пайдаланушыларға қамқорлық */
+@media (prefers-reduced-motion: reduce){
+  .hero-cta__art, .hero-cta__art * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+
+
+/* ---- Links: no underline for buttons/hero ---- */
+a.btn,
+.hero-cta a,
+.hero-cta a:visited {
+  text-decoration: none !important;
+  border-bottom: 0 !important;   /* егер бір жерде border-bottom берілсе */
+}
+
+.hero-cta a:hover {
+  text-decoration: none;
+}
+
+/* Егер барлық сілтемелерден underline-ды алғың келсе: */
+a, a:visited { text-decoration: none; }
+a:hover { text-decoration: none; }  /* hover-да да сызық шықпасын */
+
+.no-underline, .no-underline:visited, .no-underline:hover {
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+}
+
+/* ===== Батырмалар үшін анимация ===== */
+.btn {
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease;
+  transform: scale(1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Hover кезінде */
+.btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Негізгі (primary) батырма — жылжымалы фон */
+.btn.primary {
+  background: linear-gradient(135deg, #007bff, #00b4ff);
+  color: #fff;
+  border: none;
+  background-size: 200%;
+  transition: all 0.4s ease;
+}
+.btn.primary:hover {
+  background-position: right center;
+}
+
+/* Екінші батырма (outline) — fade эффект */
+.btn.outline {
+  border: 2px solid #007bff;
+  color: #007bff;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.btn.outline:hover {
+  background: rgba(0, 123, 255, 0.1);
+  color: #005fcc;
+  transform: translateY(-2px);
+}
+
+

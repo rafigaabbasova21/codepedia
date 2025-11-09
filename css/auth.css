@@ -1,0 +1,70 @@
+/* css/auth.css */
+
+/* Глобал айнымалылар (бұл болмағандықтан түстер ұшып кеткен) */
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --panel-2:#f8fafc;
+  --muted:#475569; --text:#0f172a;
+  --brand:#2563eb; --brand-2:#06b6d4;
+  --border: rgba(15,23,42,0.08);
+  --shadow: 0 10px 30px rgba(15,23,42,0.08);
+}
+
+/* Тек auth бетіне фон және базалық сетка */
+.auth-body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background: radial-gradient(1400px 800px at 20% -10%, #e5f0ff 0%, var(--bg) 45%) fixed;
+}
+
+.container{ max-width:1100px; margin:40px auto; padding:0 16px; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+@media (max-width:900px){ .grid-2{ grid-template-columns:1fr; } }
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:22px;
+  box-shadow:var(--shadow);
+}
+
+/* Формалар */
+.form-row{ display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+label{ font-weight:600; }
+.input, select{
+  background:#fff; color:var(--text);
+  border:1px solid var(--border);
+  padding:10px 12px; border-radius:12px; outline:none;
+}
+.input:focus, select:focus{ box-shadow:0 0 0 4px rgba(37,99,235,.12); border-color:#93c5fd; }
+
+/* Аватар медиатекасы */
+.gallery{ display:flex; gap:10px; flex-wrap:wrap; }
+.gallery .thumb{
+  width:54px; height:54px; border-radius:10px; border:2px solid transparent;
+  overflow:hidden; cursor:pointer; box-shadow:0 3px 10px rgba(15,23,42,.08);
+}
+.gallery .thumb.selected{ border-color: var(--brand); }
+
+.avatar-wrap{ display:grid; grid-template-columns:120px 1fr; gap:16px; }
+.avatar-preview{
+  width:120px; height:120px; border-radius:16px;
+  border:1px solid var(--border); background:#eef2ff;
+  display:grid; place-items:center; overflow:hidden;
+}
+
+/* Батырмалар */
+.btn{
+  padding:10px 14px; border-radius:12px; border:1px solid var(--border);
+  background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(6,182,212,.12));
+  cursor:pointer; transition:.15s; font-weight:600;
+}
+.btn:hover{ transform:translateY(-2px); }
+.btn.primary{
+  background:linear-gradient(135deg, var(--brand), var(--brand-2));
+  color:#fff; border-color:transparent; box-shadow:0 10px 22px rgba(37,99,235,.25);
+}
+.btn.danger{ background:#fee2e2; border-color:#fecaca; color:#991b1b; }
+.small{ font-size:12px; color:#6b7280; }
+
