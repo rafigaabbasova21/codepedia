@@ -1,0 +1,31 @@
+[
+  {
+    "id": "square5",
+    "title": "Пятью пять — двадцать пять!",
+    "tags": [
+      "арифметика",
+      "цикл"
+    ],
+    "difficulty": "Easy",
+    "url": "js/problems/square5.json"
+  },
+  {
+    "id": "sumab",
+    "title": "Екі санның қосындысы",
+    "tags": [
+      "арифметика"
+    ],
+    "difficulty": "Easy",
+    "url": "js/problems/sumab.json"
+  },
+  {
+    "id": "password",
+    "title": "Пароль тексеру",
+    "tags": [
+      "шарт",
+      "жолдар"
+    ],
+    "difficulty": "Easy",
+    "url": "js/problems/password.json"
+  }
+]

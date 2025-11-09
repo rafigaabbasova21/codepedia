@@ -1,0 +1,15 @@
+{
+  "title": "Екі санның қосындысы",
+  "statement": "Екі бүтін сан берілген. Олардың қосындысын шығарыңыз.",
+  "samples": [
+    {
+      "input": "10 20",
+      "output": "30"
+    },
+    {
+      "input": "7 -3",
+      "output": "4"
+    }
+  ],
+  "template": "a,b=map(int,input().split())\nprint(a+b)"
+}
