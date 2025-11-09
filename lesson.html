@@ -54,23 +54,28 @@
   })();
 </script>
 
-  <!-- Firebase SDK (compat) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <!-- Firebase v8 (міндетті түрде lesson.js-тен БҰРЫН қосылады) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<!-- Біздің конфиг -->
-<script src="js/firebase-config.js"></script>
+    <!-- Firebase config (осы жерде window.db орнатылады) -->
+    <script src="js/firebase-config.js"></script>
 
-<!-- Енді ғана негізгі логика жүктеледі -->
-<script src="js/lesson.js"></script>
+    <!-- Common UI scripts -->
+    <script src="js/header.js"></script>
+    <script src="js/sidebar.js"></script>
 
-  <script src="js/header.js"></script>
-  <script src="js/sidebar.js"></script>
-  <script>renderHeader(); renderSidebar();</script>
-  <script src="js/courses-seed.js"></script>
+    <!-- Сабақ логикасы (Firebase-тен оқитын файл) -->
+    <script src="js/lesson.js"></script>
 
-  <script src="js/lesson.js"></script>
-</body>
+    <!-- Курстарды бастапқы реттеу (seed) -->
+    <script src="js/courses-seed.js"></script>
+
+    <script>
+      renderHeader();
+      renderSidebar();
+    </script>
+  </body>
 </html>
 
 
