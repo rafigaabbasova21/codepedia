@@ -21,8 +21,10 @@
       localStorage.setItem(VERSION_KEY, remoteVersion);
       console.log("[cp] courses seeded/updated to version", remoteVersion);
       // localStorage жаңарғанын басқа скрипттерге хабарлау
+     
       window.dispatchEvent(new Event('cp-courses-updated'));
       console.log('[cp] event cp-courses-updated dispatched');
+      window.dispatchEvent(new Event('cp_courses_ready'));
 
     } catch (e) {
       console.error("[cp] localStorage save error:", e);
