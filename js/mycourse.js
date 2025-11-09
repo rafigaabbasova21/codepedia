@@ -1,28 +1,27 @@
 // js/mycourse.js
 (function(){
   const $ = (s, ro=document)=>ro.querySelector(s);
-  const load = (k, fb=null)=>{ try{ const r=localStorage.getItem(k); return r?JSON.parse(r):fb }catch(_){ return fb } };
+  const load = (k, fb=null)=>{ 
+    try{ 
+      const r = localStorage.getItem(k); 
+      return r ? JSON.parse(r) : fb; 
+    }catch(_){ 
+      return fb; 
+    } 
+  };
   const USER = localStorage.getItem('cp_current') || 'guest';
 
-  // ---- 1) Курсты оқу (функция ретінде) ----
-  function getLessons(){
-    const store  = load('cp_courses') || {};
-    const course = store.courses && store.courses['python-0'];
-    const lessons = (course && Array.isArray(course.lessons)) ? course.lessons : [];
-    return lessons;
-  }
-
-  // ---- 2) Көмекші: бір сабақтың прогресін есептеу ----
+  // Бір сабақтың прогресін есептеу
   function lessonProgress(lesson){
     const k = `cp_steps__${USER}__${lesson.id}`;
     const st = load(k, {completed:[]});
     const done = (st.completed||[]).length;
     const total = (lesson.steps||[]).length || 0;
-    const pct = total? Math.round(done*100/total) : 0;
+    const pct = total ? Math.round(done*100/total) : 0;
     return {done,total,pct};
   }
 
-  // ---- 3) Бір карточканың HTML-ы ----
+  // Сабақ карточкасының HTML-і
   function cardHTML(l){
     const {done,total,pct} = lessonProgress(l);
     const levelBadge = `<span class="badge">Бастапқы</span>`;
@@ -45,15 +44,15 @@
       </div>`;
   }
 
-  const HIDE_KEY = 'cp_hidden_lessons';
-  const getHidden = () => new Set(JSON.parse(localStorage.getItem(HIDE_KEY) || '[]'));
-  const setHidden = (set) => localStorage.setItem(HIDE_KEY, JSON.stringify([...set]));
+  // 🔁 Негізгі рендер функция
+  function renderMyCourses(){
+    // 1) Курсты оқу
+    const store   = load('cp_courses') || {};
+    const course  = store.courses && store.courses['python-0'];
+    const lessons = (course && Array.isArray(course.lessons)) ? course.lessons : [];
 
-  // ---- 4) БАРЛЫҚ БЕТТІ РЕНДЕРЛЕУ ФУНКЦИЯСЫ ----
-  function renderCourses(){
+    // 2) Контейнер дайындау
     let grid = $('#lessonsGrid');
-
-    // Контейнер жоқ болса — hero-дан кейін жасаймыз (бұрынғы логикаң)
     if(!grid){
       const hero = document.querySelector('.hero, .course-hero, .banner') || $('main .container') || document.body;
       grid = document.createElement('div');
@@ -64,43 +63,51 @@
       hero.parentNode.insertBefore(grid, hero.nextSibling);
     }
 
-    const lessons = getLessons();
-    grid.innerHTML = '';
-
+    // 3) Егер сабақ жоқ болса — хабарлама
     if(!lessons.length){
-      // Енді "мұғалім режимінде қосыңыз" деп емес, жай ғана жүктеліп жатқан сияқты текст
-      grid.innerHTML = `<div class="card" style="padding:16px;border-radius:20px;border:1px dashed #cbd5e1;background:#fff">
-        Курстар жүктеліп жатыр немесе әзірге қолжетімді сабақ жоқ.
-      </div>`;
-      return;
+      grid.innerHTML = `
+        <div class="card" style="padding:16px;border-radius:20px;border:1px dashed #cbd5e1;background:#fff">
+          Әзірге жарияланған сабақ жоқ. <a href="teacher.html">Мұғалім режимінде</a> сабақ қосыңыз.
+        </div>`;
+    } else {
+      grid.innerHTML = lessons.map(cardHTML).join('');
     }
 
-    grid.innerHTML = lessons.map(cardHTML).join('');
+    // 4) Батырма әрекеті (бір рет қана навешиваем)
+    if(!grid._cpBound){
+      grid.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.startBtn');
+        if(!btn) return;
+        const id = btn.getAttribute('data-id');
 
-    // Батырма әрекеті (бұрынғы логика)
-    grid.onclick = (e)=>{
-      const btn = e.target.closest('.startBtn');
-      if(!btn) return;
-      const id = btn.getAttribute('data-id');
-      const order = lessons.map(l=>l.id);
-      localStorage.setItem('cp_lesson_order', JSON.stringify(order));
-      location.href = `lesson.html?lesson=${encodeURIComponent(id)}`;
-    };
+        const order = lessons.map(l=>l.id);
+        localStorage.setItem('cp_lesson_order', JSON.stringify(order));
+        location.href = `lesson.html?lesson=${encodeURIComponent(id)}`;
+      });
+      grid._cpBound = true;
+    }
 
-    // Хедердегі курс прогресі
+    // 5) Хедердегі курс прогресі
     const totalSteps = lessons.reduce((a,l)=> a + ((l.steps||[]).length||0), 0);
-    const doneSteps  = lessons.reduce((a,l)=> a + (lessonProgress(l).done||0), 0);
-    const pct = totalSteps? Math.round(doneSteps*100/totalSteps) : 0;
-    const bar = document.querySelector('.progress > span');
-    if(bar) bar.style.width = pct + '%';
+    const doneSteps  = lessons.reduce((a,l)=> {
+      const p = lessonProgress(l);
+      return a + (p.done||0);
+    }, 0);
+    const pct = totalSteps ? Math.round(doneSteps*100/totalSteps) : 0;
+
+    const bar  = document.querySelector('.progress > span');
+    const text = document.querySelector('.progress-text, .course-progress-text');
+    if(bar)  bar.style.width = pct + '%';
+    if(text) text.textContent = pct + '%';
   }
 
-  // ---- 5) Алғашқы рендер ----
-  document.addEventListener('DOMContentLoaded', renderCourses);
+  // 🌟 Алғашқы рендер
+  renderMyCourses();
 
-  // ---- 6) Firebase seed localStorage-ты жаңартқанда қайта рендерлеу ----
-  window.addEventListener('cp-courses-updated', function(){
-    console.log('[cp] courses updated event caught in mycourse.js, re-rendering...');
-    renderCourses();
+  // 🌟 Firebase cp_courses-ты жаңартқан кезде қайта рендер жасаймыз
+  window.addEventListener('cp_courses_ready', ()=>{
+    console.log('[cp] cp_courses_ready – қайта рендер жасаймыз');
+    renderMyCourses();
   });
+
 })();
