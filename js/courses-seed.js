@@ -20,6 +20,10 @@
       localStorage.setItem(KEY, JSON.stringify(remote));
       localStorage.setItem(VERSION_KEY, remoteVersion);
       console.log("[cp] courses seeded/updated to version", remoteVersion);
+      // localStorage жаңарғанын басқа скрипттерге хабарлау
+      window.dispatchEvent(new Event('cp-courses-updated'));
+      console.log('[cp] event cp-courses-updated dispatched');
+
     } catch (e) {
       console.error("[cp] localStorage save error:", e);
       alert(
