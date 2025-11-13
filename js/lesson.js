@@ -1,3 +1,9 @@
+// бір қадамға тұрақты идентификатор (id бар болса — соны, болмаса type+index)
+function stepStorageId(st, idx){
+  return (st && st.id) ? String(st.id) : `${st?.type||'step'}-${idx}`;
+}
+
+
 // ======================= LESSON.JS (dynamic + autosave) =======================
 
 // ---- 0) Teacher дерегін оқу (cp_courses) және глобалға жазу
@@ -473,9 +479,10 @@ function attachEvents(){
     const manualOut = $('#manualOut');
     const feedback  = $('#codeFeedback');
 
-    const srcK = codeSrcKey(USER, LESSON_ID, st.id);
-    const inK  = codeInKey (USER, LESSON_ID, st.id);
-    const outK = codeOutKey(USER, LESSON_ID, st.id);
+  const SID = stepStorageId(st, IDX);
+  const srcK = codeSrcKey(USER, LESSON_ID, SID);
+  const inK  = codeInKey (USER, LESSON_ID, SID);
+  const outK = codeOutKey(USER, LESSON_ID, SID);
 
     // Қалпына келтіру
     const savedSrc = localStorage.getItem(srcK); if (savedSrc !== null) codeEl.value = savedSrc;
@@ -525,7 +532,7 @@ function attachEvents(){
       if(_norm(manualOut.value) === expected){ submitBtn.removeAttribute('disabled'); }
     });
 
-    const attemptKey = `cp_code_${USER}_${LESSON_ID}_${st.id}`;
+    const attemptKey = `cp_code_${USER}_${LESSON_ID}_${SID}`;
     const attempted  = !!localStorage.getItem(attemptKey);
     if (attempted) {
       submitBtn?.setAttribute('disabled','');
@@ -600,3 +607,4 @@ window.addEventListener('cp_courses_ready', ()=>{
 });
 
 // ===================== end of LESSON.JS =====================
+
