@@ -295,7 +295,6 @@
       max-width: 210px;
       max-height: 240px;
       object-fit: contain;
-      /* егер суретте ақ фон болса, аздап көмектесетін трюк */
       background: transparent;
       filter: drop-shadow(0 22px 35px rgba(15,23,42,.18));
     }
@@ -500,7 +499,6 @@
   // =========================
   // 0) СУРЕТТЕР (ӨЗІҢ ҚОЯСЫҢ)
   // =========================
-  // Мысалы: "img/fox.png" және "img/rabbit.png"
   const FOX_IMG = "img/right.png";
   const RABBIT_IMG = "img/left.png";
 
@@ -569,13 +567,11 @@
     if(!sfxOn) return;
     ensureAudio();
 
-    // fanfare
     tone(523.25, 0.10, "triangle", 0.09, 784);
     setTimeout(()=>tone(659.25, 0.10, "triangle", 0.08), 90);
     setTimeout(()=>tone(784.00, 0.12, "triangle", 0.09), 180);
     setTimeout(()=>tone(988.00, 0.14, "triangle", 0.08), 280);
 
-    // short cheer-like noise punch
     const t0 = audioCtx.currentTime + 0.02;
     const bufferSize = Math.floor(0.18 * audioCtx.sampleRate);
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -602,59 +598,48 @@
   // =========================
   // 2) QUESTIONS (Python)
   // =========================
-  // 10 раундқа жететін pool. Әр жаққа бөлек сұрақ келеді.
   const QPOOL = [
-  { q:`break не істейді?`, 
-    options:["Циклді қайта бастайды","Циклді толық тоқтатады","Бағдарламаны жабады","Айнымалыны өзгертеді"], 
-    a:1 
-  },
-
-  { q:`Нәтиже қандай?\nfor i in range(5):\n    if i == 3:\n        break\n    print(i)`, 
-    options:["0 1 2","0 1 2 3","3","0 1"], 
-    a:0 
-  },
-
-  { q:`Нәтиже қандай?\nfor i in range(4):\n    print(i)\n    break`, 
-    options:["0","0 1 2 3","1","Ештеңе шықпайды"], 
-    a:0 
-  },
-
-  { q:`Нәтиже қандай?\nfor i in range(1, 6):\n    if i == 5:\n        break\n    print(i)`, 
-    options:["1 2 3 4","1 2 3 4 5","5","2 3 4"], 
-    a:0 
-  },
-
-  { q:`Бұл код қанша сан шығарады?\nfor i in range(10):\n    if i == 2:\n        break\n    print(i)`, 
-    options:["1","2","3","10"], 
-    a:1 
-  },
-
-  { q:`Нәтиже қандай?\ni = 0\nwhile True:\n    print(i)\n    break`, 
-    options:["0","Шексіз шығады","Қате шығады","Ештеңе шықпайды"], 
-    a:0 
-  },
-
-  { q:`Нәтиже қандай?\nfor i in range(3):\n    if i == 0:\n        break\n    print(i)`, 
-    options:["0","1 2","Ештеңе шықпайды","0 1 2"], 
-    a:2 
-  },
-
-  { q:`Қай кезде break орындалады?\nfor i in range(5):\n    if i == 4:\n        break`, 
-    options:["i = 0","i = 2","i = 4","i = 5"], 
-    a:2 
-  },
-
-  { q:`Нәтиже қандай?\nfor i in range(1, 5):\n    print(i)\n    if i == 2:\n        break`, 
-    options:["1 2","1 2 3 4","2","1"], 
-    a:0 
-  },
-
-  { q:`break қолданбасақ не болады?\nfor i in range(3):\n    print(i)`, 
-    options:["Цикл тоқтайды","Барлық сандар шығады","Қате болады","Бір ғана сан шығады"], 
-    a:1 
-  },
-];
-
+    { q:`break не істейді?`,
+      options:["Циклді қайта бастайды","Циклді толық тоқтатады","Бағдарламаны жабады","Айнымалыны өзгертеді"],
+      a:1
+    },
+    { q:`Нәтиже қандай?\nfor i in range(5):\n    if i == 3:\n        break\n    print(i)`,
+      options:["0 1 2","0 1 2 3","3","0 1"],
+      a:0
+    },
+    { q:`Нәтиже қандай?\nfor i in range(4):\n    print(i)\n    break`,
+      options:["0","0 1 2 3","1","Ештеңе шықпайды"],
+      a:0
+    },
+    { q:`Нәтиже қандай?\nfor i in range(1, 6):\n    if i == 5:\n        break\n    print(i)`,
+      options:["1 2 3 4","1 2 3 4 5","5","2 3 4"],
+      a:0
+    },
+    { q:`Бұл код қанша сан шығарады?\nfor i in range(10):\n    if i == 2:\n        break\n    print(i)`,
+      options:["1","2","3","10"],
+      a:1
+    },
+    { q:`Нәтиже қандай?\ni = 0\nwhile True:\n    print(i)\n    break`,
+      options:["0","Шексіз шығады","Қате шығады","Ештеңе шықпайды"],
+      a:0
+    },
+    { q:`Нәтиже қандай?\nfor i in range(3):\n    if i == 0:\n        break\n    print(i)`,
+      options:["0","1 2","Ештеңе шықпайды","0 1 2"],
+      a:2
+    },
+    { q:`Қай кезде break орындалады?\nfor i in range(5):\n    if i == 4:\n        break`,
+      options:["i = 0","i = 2","i = 4","i = 5"],
+      a:2
+    },
+    { q:`Нәтиже қандай?\nfor i in range(1, 5):\n    print(i)\n    if i == 2:\n        break`,
+      options:["1 2","1 2 3 4","2","1"],
+      a:0
+    },
+    { q:`break қолданбасақ не болады?\nfor i in range(3):\n    print(i)`,
+      options:["Цикл тоқтайды","Барлық сандар шығады","Қате болады","Бір ғана сан шығады"],
+      a:1
+    },
+  ];
 
   function pickQuestion(){
     return QPOOL[Math.floor(Math.random()*QPOOL.length)];
@@ -664,10 +649,8 @@
   // 3) GAME STATE
   // =========================
   const TOTAL_ROUNDS = 10;
-
   let started = false;
   let round = 1;
-
   let scoreL = 0, scoreR = 0;
 
   // Rope visual position (-1..+1)
@@ -682,6 +665,12 @@
 
   // each round: each side answers once
   let answeredL = false, answeredR = false;
+
+  // --- Round timer (FIX) ---
+  const ROUND_TIME_MS = 8000; // 8 секунд
+  let roundTimer = null;
+  let roundTick = null;
+  let roundDeadline = 0;
 
   // =========================
   // 4) ELEMENTS
@@ -761,8 +750,55 @@
   }
 
   // =========================
-  // 6) GAME FLOW
+  // 6) GAME FLOW + TIMER FIX
   // =========================
+  function stopRoundTimer(){
+    if(roundTimer) clearTimeout(roundTimer);
+    if(roundTick) clearInterval(roundTick);
+    roundTimer = null;
+    roundTick = null;
+  }
+
+  function startRoundTimer(){
+    stopRoundTimer();
+    roundDeadline = Date.now() + ROUND_TIME_MS;
+
+    roundTick = setInterval(()=>{
+      if(!started) return;
+      const left = Math.max(0, roundDeadline - Date.now());
+      const sec = Math.ceil(left/1000);
+      ticker.textContent = `Раунд ${round}/${TOTAL_ROUNDS} — Уақыт: ${sec}s`;
+    }, 200);
+
+    roundTimer = setTimeout(()=> onRoundTimeout(), ROUND_TIME_MS);
+  }
+
+  function onRoundTimeout(){
+    if(!started) return;
+
+    if(!answeredL){
+      answeredL = true;
+      markSide("L", -1, qL.a);
+      disableSide("L");
+      ropeVel += +VIS_PULL_WRONG;
+    }
+    if(!answeredR){
+      answeredR = true;
+      markSide("R", -1, qR.a);
+      disableSide("R");
+      ropeVel += -VIS_PULL_WRONG;
+    }
+
+    stopRoundTimer();
+    setTicker("Уақыт бітті! ⏳ Келесі сұраққа өтеміз…");
+
+    setTimeout(()=>{
+      round++;
+      if(round > TOTAL_ROUNDS) finishGame();
+      else newRound();
+    }, 650);
+  }
+
   function newRound(){
     answeredL = false;
     answeredR = false;
@@ -775,6 +811,8 @@
 
     updateTop();
     setTicker(`Раунд ${round}/${TOTAL_ROUNDS} — Екі жақ та жауап берсін!`);
+
+    startRoundTimer(); // ✅ басты фикc
   }
 
   function choose(side, choice){
@@ -801,24 +839,22 @@
     }else{
       setTicker(`${side==="L" ? "Көк топ" : "Қызыл топ"}: Қате ❌`);
       sfxFail();
-      // wrong gives small pull to opponent (visual only)
       ropeVel += (side==="L" ? +VIS_PULL_WRONG : -VIS_PULL_WRONG);
     }
 
-    // екеуі де жауап берсе — келесі раунд
+    // ✅ екеуі де жауап берсе — таймерді тоқтатып, келесі раунд
     if(answeredL && answeredR){
+      stopRoundTimer();
       setTimeout(()=>{
         round++;
-        if(round > TOTAL_ROUNDS){
-          finishGame();
-        }else{
-          newRound();
-        }
+        if(round > TOTAL_ROUNDS) finishGame();
+        else newRound();
       }, 650);
     }
   }
 
   function finishGame(){
+    stopRoundTimer();
     started = false;
     stopBG();
     setTicker("Ойын аяқталды! 🏁");
@@ -849,6 +885,7 @@
   }
 
   function resetGame(){
+    stopRoundTimer();
     started = false;
     round = 1;
     scoreL = 0; scoreR = 0;
@@ -894,8 +931,8 @@
   // =========================
   btnStart.addEventListener("click", () => {
     if(started) return;
-    ensureAudio();       // 👈 маңызды (браузер рұқсаты)
-    if(bgOn) startBG();  // 🎵
+    ensureAudio();
+    if(bgOn) startBG();
     started = true;
     round = 1;
     scoreL = 0; scoreR = 0;
@@ -903,9 +940,7 @@
     newRound();
   }, {passive:true});
 
-  btnReset.addEventListener("click", () => {
-    resetGame();
-  }, {passive:true});
+  btnReset.addEventListener("click", () => resetGame(), {passive:true});
 
   btnMusic.addEventListener("click", () => {
     ensureAudio();
@@ -924,6 +959,7 @@
   function closeOverlay(){ overlay.classList.remove("show"); }
   btnClose.addEventListener("click", closeOverlay, {passive:true});
   btnJustClose.addEventListener("click", closeOverlay, {passive:true});
+
   btnAgain.addEventListener("click", () => {
     closeOverlay();
     ensureAudio();
@@ -938,7 +974,6 @@
   // init
   resetGame();
   updateRope();
-
 })();
 </script>
 </body>
