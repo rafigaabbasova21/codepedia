@@ -445,12 +445,12 @@
 
       <!-- CHARACTERS (replace images in assets folder) -->
       <div class="player leftP" id="pL">
-        <img class="char left" src="assets/left.png" alt="Көк кейіпкер">
+        <img class="char left" src="img/left.png" alt="Көк кейіпкер">
         <small>Көк</small>
       </div>
 
       <div class="player rightP" id="pR">
-        <img class="char right" src="assets/right.png" alt="Қызыл кейіпкер">
+        <img class="char right" src="img/right.png" alt="Қызыл кейіпкер">
         <small>Қызыл</small>
       </div>
     </div>
