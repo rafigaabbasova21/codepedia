@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mission Voyage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg0:#050b14;
+      --bg1:#071a2c;
+      --panel: rgba(255,255,255,.10);
+      --panel2: rgba(255,255,255,.14);
+      --border: rgba(255,255,255,.14);
+      --text:#eaf2ff;
+      --muted: rgba(234,242,255,.72);
+      --shadow: 0 18px 46px rgba(0,0,0,.42);
+      --r: 20px;
+      --grad: linear-gradient(135deg,#2563eb,#06b6d4);
+      --ring: 0 0 0 4px rgba(59,209,255,.18);
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 15%, rgba(37,99,235,.22), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(6,182,212,.18), transparent 62%),
+        radial-gradient(900px 520px at 50% 85%, rgba(2,132,199,.12), transparent 65%),
+        linear-gradient(180deg,var(--bg0),var(--bg1));
+      overflow:hidden;
+    }
+
+    /* Topbar */
+    .topbar{
+      position:fixed; left:0; right:0; top:0;
+      height:68px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 18px;
+      background: rgba(5,11,20,.55);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.10);
+      z-index:100;
+    }
+    .left{ display:flex; align-items:center; gap:12px; }
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .dot{
+      width:14px; height:14px; border-radius:999px;
+      background: var(--grad);
+      box-shadow: 0 14px 26px rgba(37,99,235,.22);
+    }
+    .brand b{ letter-spacing:.2px; }
+    .pill{
+      font-size:12px; font-weight:800;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+    }
+    .right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      font-weight:800;
+      padding:10px 14px;
+      border-radius:14px;
+      color:white;
+      background: var(--grad);
+      box-shadow: 0 16px 28px rgba(37,99,235,.18);
+      transition: transform .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+    .btn--ghost{
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:none;
+    }
+    .btn--danger{
+      background: rgba(255,0,0,.12);
+      border:1px solid rgba(255,0,0,.18);
+      box-shadow:none;
+    }
+    .btn:focus-visible{ outline:none; box-shadow: var(--ring); }
+
+    #musicVol{ width:120px; accent-color:#3bd1ff; opacity:.9; }
+
+    /* Intro overlay */
+    .overlay{
+      position:fixed; inset:0;
+      display:grid; place-items:center;
+      padding:18px;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(37,99,235,.22), transparent 55%),
+        radial-gradient(900px 500px at 80% 20%, rgba(6,182,212,.18), transparent 60%),
+        rgba(0,0,0,.62);
+      z-index:1000;
+    }
+    .card{
+      width:min(980px,100%);
+      border-radius: var(--r);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{ padding:18px 18px 0; }
+    .cardHead h1{ margin:0; font-size:28px; }
+    .cardHead p{ margin:8px 0 0; color:var(--muted); }
+    .videoWrap{ padding:18px; }
+    video{
+      width:100%;
+      border-radius:16px;
+      background:#000;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .cardActions{
+      padding:0 18px 18px;
+      display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
+    }
+
+    /* Scene */
+    .scene{ position:absolute; inset:68px 0 0 0; }
+    .scene::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(1200px 600px at 20% 25%, rgba(6,182,212,.26), transparent 60%),
+        radial-gradient(900px 520px at 80% 25%, rgba(37,99,235,.20), transparent 62%),
+        radial-gradient(900px 520px at 55% 78%, rgba(6,182,212,.16), transparent 65%),
+        linear-gradient(180deg, rgba(2,6,23,.22), rgba(2,6,23,.56));
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .bg{
+      position:absolute; inset:0;
+      background-image:url("assets/map.jpg");
+      background-size:cover;
+      background-position:center;
+      filter: saturate(1.08) contrast(1.06);
+      z-index:1;
+      pointer-events:none; /* never block clicks */
+    }
+    .bg::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        repeating-linear-gradient(
+          110deg,
+          rgba(255,255,255,.10) 0px,
+          rgba(255,255,255,.10) 2px,
+          transparent 10px,
+          transparent 24px
+        ),
+        radial-gradient(900px 520px at 18% 18%, rgba(255,255,255,.12), transparent 62%),
+        linear-gradient(to bottom, rgba(0,0,0,.08), rgba(0,0,0,.28));
+      opacity:.14;
+      mix-blend-mode: overlay;
+      animation: wave 9s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes wave{ from{ transform:translateX(-90px);} to{ transform:translateX(90px);} }
+
+    .islands{
+      position:absolute; inset:0;
+      z-index:10;
+      pointer-events:auto;
+    }
+    .island{
+      position:absolute;
+      transform:translate(-50%,-50%);
+      background:transparent;
+      border:none;
+      cursor:pointer;
+      padding:0;
+      pointer-events:auto;
+    }
+    .island img{
+      width:92px; height:auto;
+      filter: drop-shadow(0 20px 24px rgba(0,0,0,.38));
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .island:hover img{ transform: translateY(-2px) scale(1.02); filter: drop-shadow(0 26px 28px rgba(0,0,0,.45)); }
+    .island:focus-visible{ outline:none; box-shadow: var(--ring); border-radius:18px; }
+
+    .tag{
+      position:absolute;
+      left:50%; bottom:-10px;
+      transform:translateX(-50%);
+      width:30px; height:30px;
+      border-radius:999px;
+      display:grid; place-items:center;
+      font-weight:900;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(10px);
+    }
+    .island.locked{ opacity:.38; pointer-events:none; }
+
+    .ship{
+      position:absolute;
+      width:86px;
+      transform:translate(-50%,-50%);
+      z-index:20;
+      pointer-events:none;
+      transition:left 1.2s ease, top 1.2s ease, transform 1.2s ease;
+    }
+    .ship img{ width:100%; filter: drop-shadow(0 24px 26px rgba(0,0,0,.45)); }
+    .shipShadow{
+      position:absolute; left:50%; top:92%;
+      width:58px; height:16px;
+      transform:translateX(-50%);
+      background: rgba(0,0,0,.22);
+      filter: blur(7px);
+      border-radius:999px;
+    }
+
+    .hud{
+      position:absolute;
+      left:18px; bottom:18px;
+      width:min(460px, calc(100% - 36px));
+      border-radius: var(--r);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      z-index:30;
+      padding:14px 16px;
+      backdrop-filter: blur(10px);
+    }
+    .row{ display:flex; justify-content:space-between; gap:12px; align-items:center; }
+    .muted{ color: var(--muted); }
+    .hudTitle{ font-size:12px; font-weight:800; color:var(--muted); }
+    .hudValue{ font-size:18px; font-weight:900; }
+    .badge{
+      font-size:12px; font-weight:900;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+    }
+
+    /* Modal (missions + cutscenes) */
+    .modal{ position:fixed; inset:0; display:none; z-index:2000; }
+    .modal.show{ display:block; }
+    .backdrop{ position:absolute; inset:0; background: rgba(0,0,0,.62); }
+    .modalCard{
+      position:absolute;
+      left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      width:min(980px, calc(100% - 36px));
+      max-height:min(86vh, 760px);
+      overflow:hidden;
+      border-radius: var(--r);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .modalHead{
+      padding:16px 18px;
+      display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .modalHead h2{ margin:0; font-size:22px; }
+    .modalHead p{ margin:6px 0 0; color:var(--muted); }
+    .modalBody{ padding:16px 18px; overflow:auto; max-height:55vh; }
+    .modalActions{
+      padding:14px 18px 18px;
+      display:flex; gap:10px; justify-content:space-between; flex-wrap:wrap;
+      border-top:1px solid rgba(255,255,255,.12);
+    }
+    .block{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10, 20, 35, .35);
+      padding:14px;
+      margin-bottom:12px;
+    }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width:840px){ .grid2{ grid-template-columns:1fr; } }
+
+    textarea, input[type="text"]{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      outline:none;
+    }
+    textarea{ min-height:160px; resize:vertical; }
+    textarea:focus, input:focus{ box-shadow: var(--ring); }
+
+    .choice{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      user-select:none;
+    }
+    .choice:hover{ transform: translateY(-1px); }
+    .choice input{ transform:scale(1.1); }
+
+    /* Timer */
+    .timer{
+      display:flex; align-items:center; gap:10px; justify-content:space-between;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .bar{ height:10px; border-radius:999px; background: rgba(255,255,255,.10); overflow:hidden; flex:1; }
+    .fill{ height:100%; width:100%; background: var(--grad); transform-origin:left; }
+
+    /* Result */
+    .result{
+      margin-top:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .ok{ border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12); }
+    .bad{ border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.12); }
+    .warn{ border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.12); }
+
+    /* Matching drag-drop */
+    .matchWrap{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width:840px){ .matchWrap{ grid-template-columns:1fr; } }
+    .bank{
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.22);
+      background: rgba(255,255,255,.05);
+      padding:12px;
+      min-height:120px;
+    }
+    .cardItem{
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      padding:10px 12px;
+      margin:8px 0;
+      cursor:grab;
+      user-select:none;
+      font-weight:800;
+    }
+    .cardItem:active{ cursor:grabbing; }
+    .dropZone{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      padding:12px;
+      min-height:72px;
+    }
+    .zoneTitle{ font-size:12px; font-weight:900; color: var(--muted); margin-bottom:8px; }
+    .zoneActive{ box-shadow: var(--ring); }
+    .placed{ border-color: rgba(59,209,255,.28); background: rgba(59,209,255,.10); }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="left">
+      <div class="brand">
+        <span class="dot"></span>
+        <b>Mission Voyage</b>
+      </div>
+      <span class="pill" id="progressPill">0/5 арал</span>
+      <span class="pill" id="islandPill">Арал 1</span>
+    </div>
+
+    <div class="right">
+      <button class="btn btn--ghost" id="btnMusic">🔇 Музыка: OFF</button>
+      <input id="musicVol" type="range" min="0" max="100" value="35" />
+      <button class="btn btn--ghost" id="btnSkipIntro">Skip</button>
+      <button class="btn btn--danger" id="btnReset">Restart</button>
+    </div>
+  </header>
+
+  <!-- Intro -->
+  <section class="overlay" id="introOverlay" aria-hidden="false">
+    <div class="card">
+      <div class="cardHead">
+        <h1>Миссия басталады</h1>
+        <p>Видеоны көріп болғасын “Картаға өту” бас. (Не болмаса Skip 😄)</p>
+      </div>
+      <div class="videoWrap">
+        <video id="introVideo" controls playsinline>
+          <source src="assets/intro.mp4" type="video/mp4"/>
+          Видео жоқ болса да, Skip арқылы өтесің.
+        </video>
+      </div>
+      <div class="cardActions">
+        <button class="btn" id="btnToMap">Картаға өту</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scene -->
+  <main class="scene">
+    <div class="bg"></div>
+
+    <div class="islands" id="islands">
+      <button class="island" data-island="1"><img src="assets/island1.png" alt=""><span class="tag">1</span></button>
+      <button class="island" data-island="2"><img src="assets/island2.png" alt=""><span class="tag">2</span></button>
+      <button class="island" data-island="3"><img src="assets/island3.png" alt=""><span class="tag">3</span></button>
+      <button class="island" data-island="4"><img src="assets/island4.png" alt=""><span class="tag">4</span></button>
+      <button class="island" data-island="5"><img src="assets/island5.png" alt=""><span class="tag">5</span></button>
+    </div>
+
+    <div class="ship" id="ship">
+      <img src="assets/ship.png" alt="Ship">
+      <div class="shipShadow"></div>
+    </div>
+
+    <div class="hud">
+      <div class="row">
+        <div>
+          <div class="hudTitle">Ағымдағы миссия</div>
+          <div class="hudValue" id="hudMission">Интро</div>
+        </div>
+        <span class="badge" id="hudStatus">Күтіп тұр</span>
+      </div>
+      <div style="height:10px"></div>
+      <div class="muted" id="hudHint">Видеодан кейін карта ашылады.</div>
+    </div>
+  </main>
+
+  <!-- Mission Modal -->
+  <section class="modal" id="modal" aria-hidden="true">
+    <div class="backdrop" id="modalBackdrop"></div>
+    <div class="modalCard" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div>
+          <h2 id="mTitle">Миссия</h2>
+          <p id="mSub">...</p>
+        </div>
+        <button class="btn btn--ghost" id="btnClose">✕</button>
+      </div>
+      <div class="modalBody" id="mBody"></div>
+      <div class="modalActions" id="mActions"></div>
+    </div>
+  </section>
+
+  <!-- Cutscene Modal (mission complete video) -->
+  <section class="modal" id="cutscene" aria-hidden="true">
+    <div class="backdrop" id="cutBackdrop"></div>
+    <div class="modalCard" style="width:min(900px,calc(100% - 36px));" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div>
+          <h2 id="cutTitle">Катсцена</h2>
+          <p id="cutSub">Миссия аяқталды</p>
+        </div>
+        <button class="btn btn--ghost" id="btnCutClose">✕</button>
+      </div>
+      <div class="modalBody">
+        <video id="cutVideo" controls playsinline style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:#000">
+          <source id="cutSrc" src="" type="video/mp4">
+        </video>
+        <div class="muted" style="margin-top:10px">Видео біткен соң өзі жабылады. Қаласаң Skip 😄</div>
+      </div>
+      <div class="modalActions">
+        <button class="btn btn--ghost" id="btnCutSkip">Skip</button>
+        <button class="btn" id="btnCutContinue">Жалғастыру</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Audio -->
+  <audio id="bgm" loop preload="auto"><source src="assets/bgm.mp3" type="audio/mpeg"></audio>
+  <audio id="sfxWin" preload="auto"><source src="assets/sfx-win.mp3" type="audio/mpeg"></audio>
+  <audio id="sfxLose" preload="auto"><source src="assets/sfx-lose.mp3" type="audio/mpeg"></audio>
+  <audio id="sfxUnlock" preload="auto"><source src="assets/sfx-unlock.mp3" type="audio/mpeg"></audio>
+
+  <script>
+    // ===== Helpers =====
+    const $=(s,p=document)=>p.querySelector(s);
+    const $$=(s,p=document)=>[...p.querySelectorAll(s)];
+    const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+    const rand=(a,b)=>Math.random()*(b-a)+a;
+    const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+    const normalize=(s)=>String(s||"").trim().toLowerCase().replace(/\s+/g," ");
+    const esc=(s)=>String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    const btn=(text, cls="btn")=>{const b=document.createElement("button");b.className=cls;b.textContent=text;return b;};
+
+    // ===== Audio System =====
+    const audio={enabled:false,bgm:null,sfxWin:null,sfxLose:null,sfxUnlock:null};
+    function initAudio(){
+      audio.bgm=$("#bgm"); audio.sfxWin=$("#sfxWin"); audio.sfxLose=$("#sfxLose"); audio.sfxUnlock=$("#sfxUnlock");
+      const saved=JSON.parse(localStorage.getItem("mv_audio")||"{}");
+      audio.enabled=!!saved.enabled;
+      const v=(saved.volume ?? 0.35);
+      setVolume(v);
+      renderMusicBtn();
+      if(audio.enabled) safePlayBgm();
+
+      $("#btnMusic").addEventListener("click", async ()=>{
+        audio.enabled=!audio.enabled;
+        localStorage.setItem("mv_audio", JSON.stringify({enabled:audio.enabled, volume: audio.bgm?.volume ?? 0.35}));
+        if(audio.enabled) await safePlayBgm(); else audio.bgm.pause();
+        renderMusicBtn();
+      });
+
+      $("#musicVol").addEventListener("input", ()=>{
+        const v=(Number($("#musicVol").value)||0)/100;
+        setVolume(v);
+        localStorage.setItem("mv_audio", JSON.stringify({enabled:audio.enabled, volume:v}));
+      });
+    }
+    function renderMusicBtn(){ $("#btnMusic").textContent = audio.enabled ? "🔊 Музыка: ON" : "🔇 Музыка: OFF"; }
+    function setVolume(v){
+      v=clamp(v,0,1);
+      audio.bgm.volume=v;
+      const sfxV=clamp(v+0.15,0,1);
+      audio.sfxWin.volume=sfxV; audio.sfxLose.volume=sfxV; audio.sfxUnlock.volume=sfxV;
+      $("#musicVol").value=String(Math.round(v*100));
+    }
+    async function safePlayBgm(){ try{ await audio.bgm.play(); }catch{} }
+    function playSfx(el){ if(!audio.enabled) return; try{ el.currentTime=0; el.play(); }catch{} }
+
+    // ===== State =====
+    const state={introDone:false,currentIsland:1,unlocked:1,completed:new Set(),timerId:null,timerEndsAt:null};
+
+    const islandPositions={
+      1:{left:18, top:68},
+      2:{left:36, top:36},
+      3:{left:56, top:62},
+      4:{left:74, top:34},
+      5:{left:86, top:66},
+    };
+
+    // ===== Missions =====
+    const missions={
+      1:{ title:"1-миссия: Мұғалім True/False", subtitle:"30 секунд таймер. Мұғалім TRUE/FALSE басады.", type:"teacher_tf",
+        questions:[
+          {text:"Python-да тізім индексы 0-ден басталады.", correct:true},
+          {text:"print(2**3) нәтижесі 6 болады.", correct:false},
+          {text:"len('abc') = 3", correct:true},
+          {text:"x = 5; x += 2 → x 6 болады.", correct:false},
+          {text:"'5' + '2' нәтижесі '52' болады.", correct:true},
+        ]},
+      2:{ title:"2-миссия: Код жазу", subtitle:"Тапсырманы Python кодымен жаз. Тексеру — авто-чек (кілт сөздер арқылы).", type:"code_write",
+        task:{
+          text:"a = 7, b = 3 берілсін. Экранға ең үлкенін шығаратын Python код жаз.",
+          starter:"# a=7\n# b=3\n# Код жаз:\n",
+          requiredAll:["a","b","print"],
+          requiredAny:[
+            ["max(", "print("],
+            ["if","else","print"]
+          ]
+        }},
+      3:{ title:"3-миссия: Тест", subtitle:"Бір дұрыс жауап.", type:"mcq",
+        q:{ text:"Python-да тізімнің соңына элемент қосудың дұрыс әдісі қайсы?",
+            options:["list.add(x)","list.append(x)","list.push(x)","list.insertEnd(x)"],
+            answerIndex:1 }},
+      4:{ title:"4-миссия: True / False", subtitle:"Берілген тұжырымды анықта.", type:"tf",
+        q:{ text:"for циклы else бөлігі break болмаса орындалады.", correct:true }},
+      5:{ title:"5-миссия: Сәйкестендіру (Drag & Drop)", subtitle:"Карточкаларды дұрыс анықтамаларға сүйреп апар.", type:"match_drag",
+        match:{
+          leftTitle:"Термин",
+          rightTitle:"Анықтама",
+          pairs:[
+            ["CPU","Процессор"],
+            ["RAM","Жедел жад"],
+            ["SSD","Тұрақты жинақтауыш"],
+            ["OS","Операциялық жүйе"],
+          ]
+        }},
+    };
+
+    // ===== Cutscenes (mission complete videos) =====
+    const cutscenes={
+      1:{ title:"1-миссия аяқталды!", sub:"Кеме келесі аралға жүзіп барады…", src:"assets/cut1.mp4" },
+      2:{ title:"2-миссия аяқталды!", sub:"Код миссиясы өтті ✅", src:"assets/cut2.mp4" },
+      3:{ title:"3-миссия аяқталды!", sub:"Тест миссиясы өтті ✅", src:"assets/cut3.mp4" },
+      4:{ title:"4-миссия аяқталды!", sub:"True/False өтті ✅", src:"assets/cut4.mp4" },
+      5:{ title:"Финал!", sub:"Барлық миссия орындалды 🎉", src:"assets/cut5.mp4" },
+    };
+
+    // ===== Storage =====
+    function persist(){
+      localStorage.setItem("mv_state", JSON.stringify({
+        introDone: state.introDone,
+        currentIsland: state.currentIsland,
+        unlocked: state.unlocked,
+        completed: [...state.completed],
+      }));
+    }
+    function restore(){
+      const raw=localStorage.getItem("mv_state");
+      if(!raw) return;
+      try{
+        const s=JSON.parse(raw);
+        state.introDone=!!s.introDone;
+        state.currentIsland=s.currentIsland ?? 1;
+        state.unlocked=s.unlocked ?? 1;
+        state.completed=new Set(s.completed ?? []);
+      }catch{}
+    }
+
+    // ===== UI =====
+    function renderIslands(){
+      $$(".island").forEach(b=>{
+        const i=+b.dataset.island;
+        const pos=islandPositions[i];
+        b.style.left=pos.left+"%";
+        b.style.top=pos.top+"%";
+        b.classList.toggle("locked", i>state.unlocked);
+      });
+      $("#progressPill").textContent=`${state.completed.size}/5 арал`;
+      $("#islandPill").textContent=`Арал ${state.currentIsland}`;
+    }
+
+    function moveShipTo(i, instant=false){
+      const pos=islandPositions[i];
+      const ship=$("#ship");
+      ship.style.transition = instant ? "none" : "";
+      ship.style.left=pos.left+"%";
+      ship.style.top=pos.top+"%";
+      ship.style.transform=`translate(-50%,-50%) rotate(${instant?0:rand(-8,8)}deg)`;
+      if(instant) requestAnimationFrame(()=>ship.style.transition="");
+    }
+
+    function updateHUD(m, st, hint){
+      $("#hudMission").textContent=m;
+      $("#hudStatus").textContent=st;
+      $("#hudHint").textContent=hint;
+      $("#progressPill").textContent=`${state.completed.size}/5 арал`;
+      $("#islandPill").textContent=`Арал ${state.currentIsland}`;
+    }
+
+    // ===== Modal (missions) =====
+    function openMissionModal(title, sub){
+      $("#mTitle").textContent=title;
+      $("#mSub").textContent=sub;
+      $("#mBody").innerHTML="";
+      $("#mActions").innerHTML="";
+      $("#modal").classList.add("show");
+      $("#modal").setAttribute("aria-hidden","false");
+    }
+    function closeMissionModal(){
+      stopTimer();
+      $("#modal").classList.remove("show");
+      $("#modal").setAttribute("aria-hidden","true");
+    }
+
+    // ===== Cutscene overlay =====
+    function openCutscene(island, onDone){
+      const data=cutscenes[island];
+      if(!data){ onDone?.(); return; }
+
+      $("#cutTitle").textContent=data.title;
+      $("#cutSub").textContent=data.sub;
+
+      const v=$("#cutVideo");
+      const src=$("#cutSrc");
+      src.src=data.src;
+      v.load();
+
+      const cut=$("#cutscene");
+      cut.classList.add("show");
+      cut.setAttribute("aria-hidden","false");
+
+      const cleanup=()=>{
+        try{ v.pause(); }catch{}
+        cut.classList.remove("show");
+        cut.setAttribute("aria-hidden","true");
+        onDone?.();
+      };
+
+      // one-shot handlers
+      const once=(el, ev, fn)=>{
+        const h=()=>{ el.removeEventListener(ev, h); fn(); };
+        el.addEventListener(ev, h);
+      };
+
+      once($("#btnCutClose"), "click", cleanup);
+      once($("#btnCutSkip"), "click", cleanup);
+      once($("#btnCutContinue"), "click", cleanup);
+      once($("#cutBackdrop"), "click", cleanup);
+      once(v, "ended", cleanup);
+
+      v.play().catch(()=>{});
+    }
+
+    // ===== Timer =====
+    function startTimer(seconds, onTick, onDone){
+      stopTimer();
+      state.timerEndsAt=Date.now()+seconds*1000;
+      const tick=()=>{
+        const left=Math.max(0, Math.ceil((state.timerEndsAt-Date.now())/1000));
+        onTick(left);
+        if(left<=0){ stopTimer(); onDone?.(); }
+      };
+      tick();
+      state.timerId=setInterval(tick,200);
+    }
+    function stopTimer(){
+      if(state.timerId){ clearInterval(state.timerId); state.timerId=null; state.timerEndsAt=null; }
+    }
+
+    // ===== Results =====
+    function failHint(msg){
+      playSfx(audio.sfxLose);
+      const d=document.createElement("div");
+      d.className="result bad";
+      d.innerHTML=`<b>Қате ❌</b><div class="muted" style="margin-top:6px">${esc(msg)}</div>`;
+      return d;
+    }
+    function okHint(msg){
+      const d=document.createElement("div");
+      d.className="result ok";
+      d.innerHTML=`<b>Дұрыс ✅</b><div class="muted" style="margin-top:6px">${esc(msg)}</div>`;
+      return d;
+    }
+
+    // ===== Mission Engine =====
+    function openIsland(i){
+      if(i>state.unlocked) return;
+      state.currentIsland=i;
+      renderIslands();
+      moveShipTo(i);
+      updateHUD(`Арал ${i}`, state.completed.has(i)?"Аяқталды":"Ойында", "Миссияны орында.");
+      runMission(i, missions[i]);
+      persist();
+    }
+
+    function markCompleted(i){
+      if(state.completed.has(i)) return;
+      state.completed.add(i);
+      renderIslands();
+      playSfx(audio.sfxWin);
+
+      // show cutscene, then unlock + move
+      openCutscene(i, ()=>{
+        if(i<5){
+          state.unlocked=Math.max(state.unlocked, i+1);
+          playSfx(audio.sfxUnlock);
+          persist();
+
+          closeMissionModal();
+          updateHUD(`Арал ${i}`, "Аяқталды", `Келесі арал ашылды: Арал ${i+1}`);
+
+          setTimeout(()=>{
+            state.currentIsland=i+1;
+            renderIslands();
+            moveShipTo(i+1);
+            updateHUD(`Арал ${i+1}`, "Дайын", "Келесі аралды басып, миссияны баста.");
+            persist();
+          }, 320);
+        }else{
+          persist();
+          closeMissionModal();
+          updateHUD("Финал", "Жеңіс", "Барлық миссия орындалды 🎉");
+        }
+      });
+    }
+
+    function runMission(i, m){
+      openMissionModal(m.title, m.subtitle);
+      const body=$("#mBody");
+      const actions=$("#mActions");
+
+      const closeB=btn("Жабу","btn btn--ghost");
+      closeB.onclick=closeMissionModal;
+
+      if(m.type==="teacher_tf"){
+        const q=m.questions[Math.floor(Math.random()*m.questions.length)];
+        const wrap=document.createElement("div");
+        wrap.className="block";
+        wrap.innerHTML=`
+          <h3>Сұрақ</h3>
+          <div style="font-size:18px;font-weight:900;margin-top:6px">${esc(q.text)}</div>
+          <div style="height:12px"></div>
+          <div class="timer">
+            <div style="min-width:96px;font-weight:900" id="tTxt">30 сек</div>
+            <div class="bar"><div class="fill" id="tFill"></div></div>
+            <div class="muted" style="min-width:140px;text-align:right">Мұғалім басқарады</div>
+          </div>
+          <div id="res"></div>
+        `;
+        body.appendChild(wrap);
+        const res=$("#res",wrap);
+
+        const bT=btn("✅ TRUE");
+        const bF=btn("⛔ FALSE");
+        const bNew=btn("Жаңа сұрақ","btn btn--ghost");
+
+        const answer=(choice)=>{
+          stopTimer();
+          res.innerHTML="";
+          const ok=(choice===q.correct);
+          res.appendChild(ok?okHint("Келесі арал ашылады.") : failHint("Қате. Қайтадан!"));
+          actions.innerHTML="";
+          if(ok){
+            const next=btn("Өтті → келесі арал"); next.onclick=()=>markCompleted(i);
+            actions.appendChild(next); actions.appendChild(closeB);
+          }else{
+            const retry=btn("Қайталау"); retry.onclick=()=>runMission(i,m);
+            actions.appendChild(retry); actions.appendChild(closeB);
+          }
+        };
+
+        bT.onclick=()=>answer(true);
+        bF.onclick=()=>answer(false);
+        bNew.onclick=()=>runMission(i,m);
+
+        startTimer(30, (left)=>{
+          $("#tTxt").textContent=`${left} сек`;
+          $("#tFill").style.transform=`scaleX(${left/30})`;
+        }, ()=>{
+          $("#tTxt").textContent="Уақыт бітті";
+          $("#tFill").style.transform="scaleX(0)";
+          res.innerHTML="";
+          res.appendChild(failHint("Уақыт бітті. Мұғалім “Өтті” деп белгілей алады."));
+          actions.innerHTML="";
+          const pass=btn("Миссия өтті (мұғалім)"); pass.onclick=()=>markCompleted(i);
+          actions.appendChild(pass); actions.appendChild(closeB);
+        });
+
+        actions.appendChild(bT); actions.appendChild(bF); actions.appendChild(bNew); actions.appendChild(closeB);
+        return;
+      }
+
+      if(m.type==="code_write"){
+        const t=m.task;
+        const box=document.createElement("div");
+        box.className="grid2";
+        box.innerHTML=`
+          <div class="block">
+            <h3>Тапсырма</h3>
+            <div style="font-size:16px;font-weight:800">${esc(t.text)}</div>
+            <div class="muted" style="margin-top:10px">Авто-тексеру кілт сөздер/құрылым арқылы.</div>
+          </div>
+          <div class="block">
+            <h3>Код</h3>
+            <textarea id="codeArea" spellcheck="false"></textarea>
+            <div style="height:10px"></div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn" id="btnCheck">Тексеру</button>
+              <button class="btn btn--ghost" id="btnHint">Hint</button>
+            </div>
+            <div id="codeRes" style="margin-top:10px"></div>
+          </div>
+        `;
+        body.appendChild(box);
+        $("#codeArea").value=t.starter;
+
+        $("#btnHint").onclick=()=>{
+          $("#codeRes").innerHTML=`<div class="result warn"><b>Hint 💡</b>
+            <div class="muted" style="margin-top:6px">
+              Варианттар: <br>• <code>print(max(a,b))</code><br>
+              • немесе <code>if a &gt; b: print(a) else: print(b)</code>
+            </div></div>`;
+        };
+
+        $("#btnCheck").onclick=()=>{
+          const code=$("#codeArea").value||"";
+          const c=normalize(code);
+          const allOk=t.requiredAll.every(k=>c.includes(normalize(k)));
+          if(!allOk){
+            $("#codeRes").innerHTML="";
+            $("#codeRes").appendChild(failHint("Кодта міндетті түрде a, b және print болуы керек."));
+            return;
+          }
+          let anyOk=false;
+          for(const group of t.requiredAny){
+            if(group.every(k=>c.includes(normalize(k)))) { anyOk=true; break; }
+          }
+          if(!anyOk){
+            $("#codeRes").innerHTML="";
+            $("#codeRes").appendChild(failHint("max(...) немесе if/else құрылымын қолдан."));
+            return;
+          }
+          $("#codeRes").innerHTML="";
+          $("#codeRes").appendChild(okHint("Дұрыс!"));
+          actions.innerHTML="";
+          const next=btn("Өтті → келесі арал"); next.onclick=()=>markCompleted(i);
+          actions.appendChild(next); actions.appendChild(closeB);
+        };
+
+        actions.appendChild(closeB);
+        return;
+      }
+
+      if(m.type==="mcq"){
+        const q=m.q;
+        const block=document.createElement("div");
+        block.className="block";
+        block.innerHTML=`
+          <h3>Сұрақ</h3>
+          <div style="font-size:18px;font-weight:900;margin-top:6px">${esc(q.text)}</div>
+          <div style="height:12px"></div>
+          <div id="opts"></div>
+          <div id="mcqRes" style="margin-top:10px"></div>
+        `;
+        body.appendChild(block);
+        const opts=$("#opts",block);
+
+        q.options.forEach((opt,idx)=>{
+          const lab=document.createElement("label");
+          lab.className="choice";
+          lab.innerHTML=`<input type="radio" name="mcq" value="${idx}"> <span style="font-weight:800">${esc(opt)}</span>`;
+          opts.appendChild(lab);
+          const sp=document.createElement("div"); sp.style.height="8px"; opts.appendChild(sp);
+        });
+
+        const check=btn("Тексеру");
+        check.onclick=()=>{
+          const v=$('input[name="mcq"]:checked')?.value;
+          const res=$("#mcqRes",block);
+          res.innerHTML="";
+          if(v==null){ res.appendChild(failHint("Жауап таңда.")); return; }
+          const ok=(+v===q.answerIndex);
+          if(ok){
+            res.appendChild(okHint("Дұрыс!"));
+            actions.innerHTML="";
+            const next=btn("Өтті → келесі арал"); next.onclick=()=>markCompleted(i);
+            actions.appendChild(next); actions.appendChild(closeB);
+          }else res.appendChild(failHint("Қате. Қайтадан."));
+        };
+
+        actions.appendChild(check);
+        actions.appendChild(closeB);
+        return;
+      }
+
+      if(m.type==="tf"){
+        const q=m.q;
+        const block=document.createElement("div");
+        block.className="block";
+        block.innerHTML=`
+          <h3>True / False</h3>
+          <div style="font-size:18px;font-weight:900;margin-top:6px">${esc(q.text)}</div>
+          <div style="height:12px"></div>
+          <label class="choice"><input type="radio" name="tf" value="true"><span style="font-weight:800">TRUE</span></label>
+          <div style="height:8px"></div>
+          <label class="choice"><input type="radio" name="tf" value="false"><span style="font-weight:800">FALSE</span></label>
+          <div id="tfRes" style="margin-top:10px"></div>
+        `;
+        body.appendChild(block);
+
+        const check=btn("Тексеру");
+        check.onclick=()=>{
+          const v=$('input[name="tf"]:checked')?.value;
+          const res=$("#tfRes",block);
+          res.innerHTML="";
+          if(v==null){ res.appendChild(failHint("TRUE/FALSE таңда.")); return; }
+          const ok=((v==="true")===q.correct);
+          if(ok){
+            res.appendChild(okHint("Дұрыс!"));
+            actions.innerHTML="";
+            const next=btn("Өтті → келесі арал"); next.onclick=()=>markCompleted(i);
+            actions.appendChild(next); actions.appendChild(closeB);
+          }else res.appendChild(failHint("Қате. Қайтадан."));
+        };
+
+        actions.appendChild(check);
+        actions.appendChild(closeB);
+        return;
+      }
+
+      if(m.type==="match_drag"){
+        const pack=m.match;
+        const wrap=document.createElement("div");
+        wrap.className="block";
+        wrap.innerHTML=`
+          <h3>Сәйкестендіру (Drag & Drop)</h3>
+          <div class="muted">${esc(pack.leftTitle)} → ${esc(pack.rightTitle)}</div>
+          <div style="height:12px"></div>
+          <div class="matchWrap">
+            <div>
+              <div class="zoneTitle">Карточкалар</div>
+              <div class="bank" id="bank"></div>
+            </div>
+            <div>
+              <div class="zoneTitle">Аймақтар</div>
+              <div id="zones"></div>
+            </div>
+          </div>
+          <div id="matchRes" style="margin-top:10px"></div>
+        `;
+        body.appendChild(wrap);
+
+        const bank=$("#bank",wrap);
+        const zones=$("#zones",wrap);
+        const res=$("#matchRes",wrap);
+
+        const pairs=pack.pairs.map(([term,def])=>({term,def}));
+        const defs=shuffle(pairs.map(p=>p.def));
+        const placement=new Map(); // def -> term
+
+        defs.forEach(def=>{
+          const z=document.createElement("div");
+          z.className="dropZone";
+          z.dataset.def=def;
+          z.innerHTML=`<div class="zoneTitle">${esc(def)}</div><div class="slot muted">Мұнда сүйреп таста...</div>`;
+          zones.appendChild(z);
+          const sp=document.createElement("div"); sp.style.height="10px"; zones.appendChild(sp);
+
+          z.addEventListener("dragover",(e)=>{e.preventDefault(); z.classList.add("zoneActive");});
+          z.addEventListener("dragleave",()=>z.classList.remove("zoneActive"));
+          z.addEventListener("drop",(e)=>{
+            e.preventDefault();
+            z.classList.remove("zoneActive");
+            const term=e.dataTransfer.getData("text/term");
+            if(!term) return;
+
+            for(const [d,t] of placement.entries()){
+              if(t===term) placement.delete(d);
+            }
+            placement.set(def,term);
+
+            $$(".dropZone",zones).forEach(zone=>{
+              const d=zone.dataset.def;
+              const slot=zone.querySelector(".slot");
+              const placed=placement.get(d);
+              if(placed){
+                slot.textContent=placed;
+                slot.classList.remove("muted");
+                zone.classList.add("placed");
+              }else{
+                slot.textContent="Мұнда сүйреп таста...";
+                slot.classList.add("muted");
+                zone.classList.remove("placed");
+              }
+            });
+          });
+        });
+
+        shuffle(pairs.map(p=>p.term)).forEach(term=>{
+          const c=document.createElement("div");
+          c.className="cardItem";
+          c.draggable=true;
+          c.textContent=term;
+          c.addEventListener("dragstart",(e)=>{e.dataTransfer.setData("text/term",term);});
+          bank.appendChild(c);
+        });
+
+        const check=btn("Тексеру");
+        const clear=btn("Тазалау","btn btn--ghost");
+
+        check.onclick=()=>{
+          res.innerHTML="";
+          if(placement.size<pairs.length){ res.appendChild(failHint("Барлығын орналастыр.")); return; }
+          let ok=true;
+          for(const p of pairs){
+            if(placement.get(p.def)!==p.term){ ok=false; break; }
+          }
+          if(ok){
+            res.appendChild(okHint("Керемет!"));
+            actions.innerHTML="";
+            const fin=btn("Финалды аяқтау"); fin.onclick=()=>markCompleted(i);
+            actions.appendChild(fin); actions.appendChild(closeB);
+          }else{
+            res.appendChild(failHint("Қате сәйкестік бар. Түзет."));
+          }
+        };
+
+        clear.onclick=()=>{
+          placement.clear();
+          $$(".dropZone",zones).forEach(zone=>{
+            zone.classList.remove("placed","zoneActive");
+            const slot=zone.querySelector(".slot");
+            slot.textContent="Мұнда сүйреп таста...";
+            slot.classList.add("muted");
+          });
+          res.innerHTML="";
+        };
+
+        actions.appendChild(check);
+        actions.appendChild(clear);
+        actions.appendChild(closeB);
+        return;
+      }
+    }
+
+    // ===== Intro / Global =====
+    function finishIntro(){
+      state.introDone=true;
+      const ov=$("#introOverlay");
+      ov.style.display="none";
+      ov.style.pointerEvents="none";
+      ov.setAttribute("aria-hidden","true");
+      updateHUD("Арал 1", "Дайын", "Арал 1-ді басып, миссияны баста.");
+      persist();
+    }
+    function hardReset(){
+      localStorage.removeItem("mv_state");
+      location.reload();
+    }
+
+    // ===== Boot =====
+    document.addEventListener("DOMContentLoaded", ()=>{
+      initAudio();
+      restore();
+
+      // Buttons
+      $("#btnToMap").addEventListener("click", async ()=>{ if(audio.enabled) await safePlayBgm(); finishIntro(); });
+      $("#btnSkipIntro").addEventListener("click", async ()=>{ if(audio.enabled) await safePlayBgm(); finishIntro(); });
+      $("#btnReset").addEventListener("click", hardReset);
+
+      $("#btnClose").addEventListener("click", closeMissionModal);
+      $("#modalBackdrop").addEventListener("click", closeMissionModal);
+
+      // Islands click
+      $$(".island").forEach(b=>{
+        b.addEventListener("click",(e)=>{
+          e.preventDefault(); e.stopPropagation();
+          openIsland(+b.dataset.island);
+        });
+      });
+
+      renderIslands();
+      moveShipTo(state.currentIsland, true);
+
+      if(state.introDone){
+        $("#introOverlay").style.display="none";
+        $("#introOverlay").style.pointerEvents="none";
+        $("#introOverlay").setAttribute("aria-hidden","true");
+        updateHUD(`Арал ${state.currentIsland}`, "Дайын", "Аралды басып, миссияны баста.");
+      }else{
+        updateHUD("Интро", "Күтіп тұр", "Видеодан кейін карта ашылады (немесе Skip).");
+      }
+    });
+  </script>
+</body>
+</html>
