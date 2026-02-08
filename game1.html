@@ -1,756 +1,909 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="kk">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Python Tug-of-War Quiz</title>
+  <title>Python Tug-of-War • Quiz</title>
   <style>
     :root{
-      --bg1:#e9f4ff;
-      --bg2:#f7fbff;
-      --card:#ffffff;
-      --shadow: 0 18px 40px rgba(2, 6, 23, .12);
+      --bg:#f6f8fc;
+      --panel:#ffffff;
       --text:#0f172a;
       --muted:#64748b;
+      --stroke:#e5e7eb;
+      --shadow: 0 18px 55px rgba(15, 23, 42, .10);
+
       --blue:#2563eb;
-      --cyan:#06b6d4;
-      --red:#ef4444;
-      --green:#22c55e;
-      --radius:20px;
+      --blueSoft: rgba(37,99,235,.12);
+
+      --red:#dc2626;
+      --redSoft: rgba(220,38,38,.12);
+
+      --ok:#16a34a;
+      --bad:#ef4444;
+
+      --rope:#c56a15;
+      --rope2:#f59e0b;
+      --r: 22px;
     }
+
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--text);
-      min-height:100vh;
-      background: radial-gradient(1200px 600px at 50% 35%, var(--bg1), var(--bg2));
-      display:flex;
-      flex-direction:column;
+      background:
+        radial-gradient(900px 500px at 50% 0%, rgba(37,99,235,.10), transparent 55%),
+        radial-gradient(900px 500px at 50% 100%, rgba(220,38,38,.10), transparent 55%),
+        var(--bg);
+      overflow:hidden;
+      user-select:none;
+      touch-action:manipulation;
     }
-    header{
-      position:sticky; top:0;
-      backdrop-filter: blur(10px);
-      background: rgba(255,255,255,.55);
-      border-bottom: 1px solid rgba(15,23,42,.08);
-      z-index:5;
-    }
+
+    /* topbar */
     .topbar{
-      max-width:1200px;
-      margin:0 auto;
-      padding:14px 16px;
+      height:74px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 18px;
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--stroke);
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      font-weight:900;
+    }
+    .logo{
+      width:40px;height:40px;border-radius:14px;
+      background: linear-gradient(135deg, var(--blue), #06b6d4);
+      box-shadow: 0 16px 35px rgba(37,99,235,.22);
+    }
+    .title{
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .metaTop{
+      display:flex; gap:12px; align-items:center;
+      color: var(--muted);
+      font-weight:800;
+    }
+    .pill{
+      padding:8px 12px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background:#fff;
+      white-space:nowrap;
+    }
+    .tools{
+      display:flex; gap:10px; align-items:center;
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:10px 14px;
+      font-weight:900;
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background:#fff;
+      transition: transform .12s ease;
+    }
+    .btn:active{transform: translateY(1px) scale(.99)}
+    .btn.primary{
+      background: var(--blue);
+      color:#fff;
+      border-color: rgba(37,99,235,.25);
+    }
+    .btn.ghost{
+      background:#fff;
+      color: var(--text);
+    }
+
+    /* layout */
+    .wrap{
+      height: calc(100% - 74px);
+      padding: 18px;
+      display:grid;
+      grid-template-columns: 1fr minmax(320px, 520px) 1fr;
+      gap: 18px;
+    }
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .sideHead{
+      padding: 18px 18px 12px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--stroke);
+    }
+    .sideHead .name{
+      font-weight:1000;
+      font-size:20px;
+    }
+    .scorePill{
+      min-width:72px;
+      text-align:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:#fff;
+      font-weight:1000;
+    }
+    .sideBody{ padding: 18px; display:grid; gap:14px; }
+
+    .qbox{
+      border:1px solid var(--stroke);
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px;
+      font-weight:950;
+      line-height:1.35;
+      white-space: pre-wrap;
+      min-height: 100px;
+    }
+
+    .options{
+      display:grid;
+      gap:12px;
+    }
+    .opt{
+      width:100%;
+      text-align:left;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color: var(--text);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .opt:active{transform: translateY(1px) scale(.995)}
+    .opt.disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+    .opt.correct{
+      border-color: rgba(22,163,74,.35);
+      background: rgba(22,163,74,.08);
+    }
+    .opt.wrong{
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.08);
+    }
+
+    .hint{
+      color: var(--muted);
+      font-weight:800;
+      font-size:14px;
+    }
+
+    /* center arena */
+    .center{
+      display:grid;
+      grid-template-rows: auto 1fr;
+    }
+    .centerHead{
+      padding: 18px;
+      border-bottom: 1px solid var(--stroke);
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:12px;
     }
-    .brand{
-      display:flex; align-items:center; gap:10px;
+    .centerTitle{
+      font-weight:1000;
+      color: var(--blue);
+    }
+    .centerSub{
+      margin-top:6px;
+      color: var(--muted);
       font-weight:800;
-      letter-spacing:.2px;
+      font-size:14px;
     }
-    .logo{
-      width:34px;height:34px;border-radius:12px;
-      background: linear-gradient(135deg, var(--blue), var(--cyan));
-      box-shadow: 0 10px 20px rgba(37,99,235,.25);
-    }
-    .pill{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      color:var(--muted); font-size:14px;
-    }
-    .pill b{color:var(--text)}
-    .btn{
-      border:0;
-      border-radius: 999px;
-      padding:10px 14px;
-      font-weight:700;
-      cursor:pointer;
-      background: linear-gradient(135deg, var(--blue), var(--cyan));
-      color:white;
-      box-shadow: 0 12px 24px rgba(37,99,235,.25);
-      transition:.15s transform;
-    }
-    .btn:active{transform: translateY(1px) scale(.99)}
-    .btn.secondary{
-      background:white; color:var(--text);
-      border:1px solid rgba(15,23,42,.12);
-      box-shadow:none;
-    }
-
-    main{
-      flex:1;
-      max-width:1200px;
-      margin:0 auto;
-      padding:18px 16px 28px;
-      display:grid;
-      grid-template-columns: 360px 1fr 360px;
-      gap:18px;
-      align-items:stretch;
-    }
-    @media (max-width: 1100px){
-      main{grid-template-columns: 1fr; }
-    }
-
-    .card{
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:16px;
-      border:1px solid rgba(15,23,42,.08);
-    }
-
-    /* Center arena */
-    .arena{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      justify-content:space-between;
-    }
-    .arenaTop{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      flex-wrap:wrap;
-    }
-    .badge{
-      background: rgba(37,99,235,.10);
-      color: #1d4ed8;
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       padding:8px 12px;
-      border-radius: 999px;
-      font-weight:800;
-      font-size:13px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: #fff;
+      font-weight:900;
+      color: var(--text);
+      white-space:nowrap;
     }
-    .badge.red{
-      background: rgba(239,68,68,.10);
-      color:#b91c1c;
+    .tag.red{ background: rgba(220,38,38,.08); border-color: rgba(220,38,38,.18); color:#b91c1c; }
+    .arena{
+      padding: 18px;
+      display:grid;
+      place-items:center;
     }
-    .hint{
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .field{
+    .stage{
+      width: min(100%, 520px);
+      height: min(55vh, 460px);
+      border-radius: 22px;
+      border:1px solid var(--stroke);
+      background:#fff;
+      box-shadow: var(--shadow);
       position:relative;
-      height: 360px;
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.65));
-      border:1px solid rgba(15,23,42,.08);
       overflow:hidden;
     }
-    .centerLine{
-      position:absolute; left:50%; top:0; bottom:0;
+    .finish{
+      position:absolute; top:16px; bottom:16px;
       width:4px;
-      transform: translateX(-2px);
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(15,23,42,.55) 0px,
-        rgba(15,23,42,.55) 10px,
-        rgba(15,23,42,0) 10px,
-        rgba(15,23,42,0) 18px
-      );
-      opacity:.45;
+      background: rgba(100,116,139,.45);
+      border-radius:999px;
     }
-    .finishL, .finishR{
-      position:absolute; top:0; bottom:0;
-      width:10px;
-      opacity:.22;
+    .finish.left{ left: 16% }
+    .finish.right{ right: 16% }
+    .midLine{
+      position:absolute; top:16px; bottom:16px; left:50%;
+      width:4px;
+      transform: translateX(-50%);
+      background: rgba(100,116,139,.25);
+      border-radius:999px;
+      border: 2px dashed rgba(100,116,139,.20);
     }
-    .finishL{left:10%; background: linear-gradient(180deg, rgba(37,99,235,.9), rgba(6,182,212,.5));}
-    .finishR{right:10%; background: linear-gradient(180deg, rgba(239,68,68,.9), rgba(239,68,68,.45));}
 
-    .ropeWrap{
-      position:absolute;
-      left:0; right:0;
-      top:50%;
-      transform: translateY(-50%);
-      height: 120px;
-    }
     .rope{
       position:absolute;
-      left:50%;
-      top:56px;
-      transform: translateX(calc(-50% + var(--shift, 0px)));
-      width: 520px;
-      height: 10px;
-      background: linear-gradient(90deg, #b45309, #f59e0b, #b45309);
-      border-radius: 999px;
-      box-shadow: 0 10px 20px rgba(2,6,23,.15);
-      transition: transform .35s ease;
-      will-change: transform;
+      left: 12%;
+      right: 12%;
+      top: 58%;
+      height: 14px;
+      transform: translateY(-50%);
+      border-radius:999px;
+      background: linear-gradient(90deg, var(--rope), var(--rope2));
+      box-shadow: 0 18px 40px rgba(15,23,42,.12);
     }
     .knot{
       position:absolute;
-      left:50%;
-      top:48px;
-      transform: translateX(calc(-50% + var(--shift, 0px)));
-      width: 30px; height: 26px;
-      background: #fbbf24;
-      border-radius: 12px;
-      border: 2px solid rgba(2,6,23,.15);
-      transition: transform .35s ease;
-      will-change: transform;
-    }
-
-    /* ---- Players (images) ---- */
-    .player{
-      position:absolute;
-      top:18px;
-      width:160px;
-      height:200px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      user-select:none;
-      filter: drop-shadow(0 16px 18px rgba(2,6,23,.15));
-      transition: transform .35s ease;
-    }
-    .leftP{ left:8%; transform: translateX(calc(var(--shift, 0px) * .12)); }
-    .rightP{ right:8%; transform: translateX(calc(var(--shift, 0px) * .12)); }
-
-    .player small{
-      position:absolute;
-      bottom:8px;
-      font-size:12px;
-      font-weight:900;
-      padding:6px 10px;
-      border-radius:999px;
-      background: rgba(255,255,255,.85);
-      border: 1px solid rgba(15,23,42,.10);
-      color: var(--text);
+      top: 58%;
+      width: 22px; height: 22px;
+      transform: translate(-50%,-50%);
+      border-radius: 10px;
+      background: #fff;
+      border: 2px solid rgba(245,158,11,.55);
+      box-shadow: 0 12px 25px rgba(245,158,11,.18);
     }
 
     .char{
-      width:160px;
-      height:200px;
-      object-fit: contain;
-      transform-origin: 60% 70%;
-      will-change: transform;
-    }
-
-    /* ---- Running animations ---- */
-    .field.running .char{
-      animation: pullBody 0.55s ease-in-out infinite;
-    }
-    .field.running .char.left{
-      animation-name: pullBodyLeft;
-    }
-    .field.running .char.right{
-      animation-name: pullBodyRight;
-    }
-    .field.running .rope{
-      animation: ropeShake 0.18s ease-in-out infinite;
-    }
-    .field.running .knot{
-      animation: knotBob 0.25s ease-in-out infinite;
-    }
-
-    /* ---- Burst (strong pull) ---- */
-    .player.burstL .char{ animation: none; }
-    .player.burstR .char{ animation: none; }
-    .player.burstL .char{ animation: burstLeft .20s ease-out 1; }
-    .player.burstR .char{ animation: burstRight .20s ease-out 1; }
-
-    @keyframes pullBodyLeft{
-      0%   { transform: translateX(0) rotate(-2deg) scale(1); }
-      50%  { transform: translateX(6px) rotate(2deg)  scale(1.01); }
-      100% { transform: translateX(0) rotate(-2deg) scale(1); }
-    }
-    @keyframes pullBodyRight{
-      0%   { transform: translateX(0) rotate(2deg)  scale(1); }
-      50%  { transform: translateX(-6px) rotate(-2deg) scale(1.01); }
-      100% { transform: translateX(0) rotate(2deg)  scale(1); }
-    }
-    @keyframes ropeShake{
-      0%   { transform: translateX(calc(-50% + var(--shift, 0px))) translateY(0); }
-      50%  { transform: translateX(calc(-50% + var(--shift, 0px))) translateY(-1px); }
-      100% { transform: translateX(calc(-50% + var(--shift, 0px))) translateY(0); }
-    }
-    @keyframes knotBob{
-      0%   { transform: translateX(calc(-50% + var(--shift, 0px))) translateY(0) scale(1); }
-      50%  { transform: translateX(calc(-50% + var(--shift, 0px))) translateY(-2px) scale(1.02); }
-      100% { transform: translateX(calc(-50% + var(--shift, 0px))) translateY(0) scale(1); }
-    }
-    @keyframes burstLeft{
-      0%   { transform: translateX(0) rotate(-1deg) scale(1); }
-      70%  { transform: translateX(16px) rotate(3deg) scale(1.03); }
-      100% { transform: translateX(6px) rotate(1deg) scale(1.01); }
-    }
-    @keyframes burstRight{
-      0%   { transform: translateX(0) rotate(1deg) scale(1); }
-      70%  { transform: translateX(-16px) rotate(-3deg) scale(1.03); }
-      100% { transform: translateX(-6px) rotate(-1deg) scale(1.01); }
-    }
-
-    .toast{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(15,23,42,.10);
-      color: var(--muted);
-      font-size:13px;
-      min-height:42px;
+      position:absolute;
+      top: 54%;
+      width: 220px;
+      height: 260px;
+      transform: translateY(-60%);
       display:flex;
-      align-items:center;
-      gap:10px;
+      align-items:flex-end;
+      justify-content:center;
+      pointer-events:none;
     }
-    .dot{
-      width:10px; height:10px; border-radius:50%;
-      background: rgba(100,116,139,.45);
-    }
-    .dot.ok{background: rgba(34,197,94,.8)}
-    .dot.bad{background: rgba(239,68,68,.8)}
+    .char.left{ left: -12px; }
+    .char.right{ right: -12px; }
 
-    /* Quiz panels */
-    .sideTitle{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:10px;
+    .char img{
+      max-width: 210px;
+      max-height: 240px;
+      object-fit: contain;
+      /* егер суретте ақ фон болса, аздап көмектесетін трюк */
+      background: transparent;
+      filter: drop-shadow(0 22px 35px rgba(15,23,42,.18));
     }
-    .sideTitle h3{
-      margin:0; font-size:16px;
-    }
-    .score{
-      font-weight:900;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid rgba(15,23,42,.12);
-      background: rgba(248,250,252,.9);
-      min-width:88px;
+
+    .ticker{
+      position:absolute;
+      left:50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      padding: 10px 14px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.9);
+      font-weight:1000;
+      color: var(--text);
+      max-width: 94%;
       text-align:center;
     }
-    .qbox{
-      background: rgba(248,250,252,.9);
-      border:1px solid rgba(15,23,42,.08);
-      border-radius: 16px;
-      padding:12px;
-      font-weight:800;
-      min-height: 86px;
-      display:flex;
-      align-items:center;
-    }
-    pre{
-      margin:0;
-      width:100%;
-      white-space:pre-wrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-      font-size:13px;
-      line-height:1.3;
-    }
-    .choices{
-      margin-top:10px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:10px;
-    }
-    .choiceBtn{
-      text-align:left;
-      padding:12px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(15,23,42,.12);
-      background:white;
-      cursor:pointer;
-      font-weight:700;
-      transition:.12s transform, .12s border-color;
-    }
-    .choiceBtn:hover{transform: translateY(-1px); border-color: rgba(37,99,235,.35)}
-    .choiceBtn:disabled{opacity:.55; cursor:not-allowed; transform:none;}
-    .choiceBtn .lab{
-      font-weight:900;
-      margin-right:8px;
-      color: rgba(15,23,42,.65);
-    }
-    .panelFooter{
-      margin-top:12px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-    }
-    .tiny{
-      font-size:12px; color:var(--muted);
-    }
 
-    /* Winner overlay */
+    /* overlay winner */
     .overlay{
-      position:fixed;
-      inset:0;
-      background: rgba(2,6,23,.55);
+      position:fixed; inset:0;
+      background: rgba(15,23,42,.55);
+      backdrop-filter: blur(10px);
       display:none;
       align-items:center;
       justify-content:center;
-      z-index:10;
-      padding:16px;
+      padding: 18px;
+      z-index: 999;
     }
+    .overlay.show{display:flex}
     .modal{
-      width:min(680px, 100%);
-      background:white;
+      width: min(900px, 96vw);
+      background:#fff;
       border-radius: 26px;
-      box-shadow: 0 30px 70px rgba(2,6,23,.35);
-      padding:18px;
-      border: 1px solid rgba(255,255,255,.25);
+      border:1px solid var(--stroke);
+      box-shadow: 0 40px 120px rgba(0,0,0,.35);
+      overflow:hidden;
     }
-    .modal h2{margin:0 0 6px 0}
-    .modal p{margin:0 0 14px 0; color:var(--muted)}
-    .modal .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .modalHead{
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--stroke);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .modalHead h2{
+      margin:0; font-size:18px; font-weight:1000;
+    }
+    .modalBody{
+      padding: 18px;
+      display:grid;
+      gap:14px;
+    }
+    .winRow{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      border:1px solid var(--stroke);
+      border-radius: 22px;
+      padding: 14px;
+      background: #fff;
+    }
+    .winAvatar{
+      width: 140px; height: 140px;
+      border-radius: 24px;
+      border:1px solid var(--stroke);
+      display:grid; place-items:center;
+      overflow:hidden;
+      background: #fff;
+    }
+    .winAvatar img{
+      width:100%; height:100%;
+      object-fit:contain;
+      filter: drop-shadow(0 18px 30px rgba(15,23,42,.18));
+    }
+    .winQuote{
+      font-size:26px;
+      font-weight:1000;
+      line-height:1.15;
+    }
+    .winSub{
+      margin-top:8px;
+      color: var(--muted);
+      font-weight:800;
+    }
+
+    @media (max-width: 1100px){
+      body{overflow:auto}
+      .wrap{
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .stage{ height: 360px; }
+      .char{ width: 200px; height: 240px; }
+      .char img{ max-width: 180px; max-height: 220px; }
+    }
   </style>
 </head>
-
 <body>
-<header>
-  <div class="topbar">
+
+  <header class="topbar">
     <div class="brand">
       <div class="logo"></div>
-      <div>Python Tug-of-War <span style="opacity:.5">•</span> Quiz</div>
+      <div>
+        <div class="title">Python Tug-of-War • Quiz</div>
+        <div class="metaTop">
+          <span class="pill" id="roundPill">Раунд: 1/10</span>
+          <span class="pill" id="stepPill">Қадам: 1/10</span>
+        </div>
+      </div>
     </div>
-    <div class="pill">
-      <span>Раунд: <b id="roundNow">1</b>/<b id="roundMax">10</b></span>
-      <span>Қадам: <b id="stepNow">0</b>/<b id="stepWin">7</b></span>
+
+    <div class="tools">
+      <button class="btn ghost" id="btnMusic">🎵 Музыка: ON</button>
+      <button class="btn ghost" id="btnSfx">🔊 SFX: ON</button>
+      <button class="btn ghost" id="btnReset">Қайта бастау</button>
+      <button class="btn primary" id="btnStart">Бастау</button>
     </div>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <button class="btn secondary" id="btnReset">Қайта бастау</button>
-      <button class="btn" id="btnStart">Бастау</button>
+  </header>
+
+  <main class="wrap">
+
+    <!-- LEFT -->
+    <section class="card" id="leftCard">
+      <div class="sideHead" style="background: linear-gradient(180deg, var(--blueSoft), transparent);">
+        <div class="name">Көк топ</div>
+        <div class="scorePill" id="scoreL">0</div>
+      </div>
+      <div class="sideBody">
+        <div class="qbox" id="qL">Бастау үшін “Бастау” бас 😄</div>
+        <div class="options" id="optsL"></div>
+        <div class="hint">Жауапты таңда — бәрі автомат 😉</div>
+      </div>
+    </section>
+
+    <!-- CENTER -->
+    <section class="card center">
+      <div class="centerHead">
+        <div>
+          <div class="centerTitle">Ойын: Арқан тарту</div>
+          <div class="centerSub">Екі жақ та жауап береді. Дұрыс жауап — арқан өзіне тартылады.</div>
+        </div>
+        <div class="tag red">Python test</div>
+      </div>
+
+      <div class="arena">
+        <div class="stage" id="stage">
+          <div class="finish left"></div>
+          <div class="finish right"></div>
+          <div class="midLine"></div>
+
+          <div class="rope" id="rope"></div>
+          <div class="knot" id="knot"></div>
+
+          <div class="char left"><img id="imgRabbit" alt="rabbit"/></div>
+          <div class="char right"><img id="imgFox" alt="fox"/></div>
+
+          <div class="ticker" id="ticker">Бастау бас — музыка да дайын 🎶</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="card" id="rightCard">
+      <div class="sideHead" style="background: linear-gradient(180deg, var(--redSoft), transparent);">
+        <div class="name">Қызыл топ</div>
+        <div class="scorePill" id="scoreR">0</div>
+      </div>
+      <div class="sideBody">
+        <div class="qbox" id="qR">Бастау үшін “Бастау” бас 😄</div>
+        <div class="options" id="optsR"></div>
+        <div class="hint">Қате болса — қарсы жақ қуанып кетеді 😅</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Winner overlay -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="modalHead">
+        <h2 id="winTitle">Жеңімпаз</h2>
+        <button class="btn ghost" id="btnClose">Жабу</button>
+      </div>
+      <div class="modalBody">
+        <div class="winRow">
+          <div class="winAvatar" id="winAvatar"></div>
+          <div>
+            <div class="winQuote" id="winQuote">—</div>
+            <div class="winSub" id="winSub">—</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn primary" id="btnAgain">Қайта ойнау</button>
+          <button class="btn ghost" id="btnJustClose">Жабу</button>
+        </div>
+      </div>
     </div>
   </div>
-</header>
-
-<main>
-  <!-- Left panel -->
-  <section class="card" id="leftPanel">
-    <div class="sideTitle">
-      <h3>Көк топ</h3>
-      <div class="score" id="scoreL">0</div>
-    </div>
-    <div class="qbox"><pre id="qL">Бастау бас!</pre></div>
-    <div class="choices" id="choicesL"></div>
-    <div class="panelFooter">
-      <div class="tiny">Жауапты таңда — бәрі автомат 😄</div>
-    </div>
-  </section>
-
-  <!-- Center arena -->
-  <section class="card arena">
-    <div class="arenaTop">
-      <span class="badge">Ойын: Арқан тарту</span>
-      <span class="hint">Екі жақ та жауап береді. Дұрыс жауап — арқан өзіне тартылады.</span>
-      <span class="badge red">Python тест</span>
-    </div>
-
-    <div class="field" id="field">
-      <div class="finishL" title="Мәре"></div>
-      <div class="finishR" title="Мәре"></div>
-      <div class="centerLine"></div>
-
-      <div class="ropeWrap">
-        <div class="rope" id="rope"></div>
-        <div class="knot" id="knot"></div>
-      </div>
-
-      <!-- CHARACTERS (replace images in assets folder) -->
-      <div class="player leftP" id="pL">
-        <img class="char left" src="img/left.png" alt="Көк кейіпкер">
-        <small>Көк</small>
-      </div>
-
-      <div class="player rightP" id="pR">
-        <img class="char right" src="img/right.png" alt="Қызыл кейіпкер">
-        <small>Қызыл</small>
-      </div>
-    </div>
-
-    <div class="toast" id="toast">
-      <span class="dot" id="toastDot"></span>
-      <span id="toastText">Дайын. “Бастау” бас.</span>
-    </div>
-  </section>
-
-  <!-- Right panel -->
-  <section class="card" id="rightPanel">
-    <div class="sideTitle">
-      <h3>Қызыл топ</h3>
-      <div class="score" id="scoreR">0</div>
-    </div>
-    <div class="qbox"><pre id="qR">Бастау бас!</pre></div>
-    <div class="choices" id="choicesR"></div>
-    <div class="panelFooter">
-      <div class="tiny">Қате болса — қарсы жақ қуанып кетеді 😅</div>
-    </div>
-  </section>
-</main>
-
-<!-- Winner overlay -->
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <h2 id="winTitle">Ойын аяқталды!</h2>
-    <p id="winDesc">Жеңімпаз: ...</p>
-    <div class="actions">
-      <button class="btn" id="btnPlayAgain">Қайта ойнау</button>
-      <button class="btn secondary" id="btnClose">Жабу</button>
-    </div>
-  </div>
-</div>
 
 <script>
-/* =======================
-   PYTHON QUIZ POOL
-   ======================= */
-const QUESTION_POOL = [
-  { prompt: `print(type(3))`, options: ["<class 'int'>","<class 'str'>","<class 'float'>","<class 'bool'>"], answerIndex: 0 },
-  { prompt: `s = "информатика"\nprint(s[2:7])`, options: ["форма","форм","нфор","рмати"], answerIndex: 2 },
-  { prompt: `a = [1,2,3]\na.append(4)\nprint(a)`, options: ["[1,2,3]","[1,2,3,4]","[4,1,2,3]","Қате шығады"], answerIndex: 1 },
-  { prompt: `print(7//2)`, options: ["3","3.5","4","Қате"], answerIndex: 0 },
-  { prompt: `x = 5\nx += 2\nprint(x)`, options: ["5","7","2","52"], answerIndex: 1 },
-  { prompt: `print("py"*3)`, options: ["py3","pypypy","py py py","Қате"], answerIndex: 1 },
-  { prompt: `a = [3,1,2]\nprint(sorted(a))`, options: ["[3,1,2]","[1,2,3]","[2,1,3]","Қате"], answerIndex: 1 },
-  { prompt: `print(bool(0))`, options: ["True","False","0","Қате"], answerIndex: 1 },
-  { prompt: `s="abc"\nprint(s.upper())`, options: ["ABC","abc","Abc","Қате"], answerIndex: 0 },
-  { prompt: `for i in range(2,6,2):\n    print(i, end=" ")`, options: ["2 3 4 5","2 4 6","2 4","4 6"], answerIndex: 2 },
-  { prompt: `d = {"a":1, "b":2}\nprint(d["b"])`, options: ["1","2","b","Қате"], answerIndex: 1 },
-  { prompt: `print(len([0,1,2,3]))`, options: ["3","4","5","Қате"], answerIndex: 1 },
-];
+(() => {
+  // =========================
+  // 0) СУРЕТТЕР (ӨЗІҢ ҚОЯСЫҢ)
+  // =========================
+  // Мысалы: "img/fox.png" және "img/rabbit.png"
+  const FOX_IMG = "assets/right.png";
+  const RABBIT_IMG = "assets/left.png";
 
-/* =======================
-   GAME SETTINGS
-   ======================= */
-const TOTAL_ROUNDS_DEFAULT = 10;
-const STEP_TO_WIN_DEFAULT = 7;
-const SHIFT_PER_STEP = 26;
+  document.getElementById("imgFox").src = FOX_IMG;
+  document.getElementById("imgRabbit").src = RABBIT_IMG;
 
-let started = false;
-let locked = false;
+  // =========================
+  // 1) AUDIO ENGINE (NO FILES)
+  // =========================
+  let audioCtx = null;
+  let bgOn = true;
+  let sfxOn = true;
+  let bgTimer = null;
 
-let totalRounds = TOTAL_ROUNDS_DEFAULT;
-let stepToWin = STEP_TO_WIN_DEFAULT;
-
-let round = 1;
-let scoreL = 0;
-let scoreR = 0;
-
-let pull = 0; // negative => left leading, positive => right leading
-
-let currentL = null;
-let currentR = null;
-
-const $ = (id) => document.getElementById(id);
-
-function pickQuestion(excludePrompt=null){
-  const pool = QUESTION_POOL.filter(q => q.prompt !== excludePrompt);
-  const q = pool[Math.floor(Math.random()*pool.length)];
-  return JSON.parse(JSON.stringify(q));
-}
-
-function setToast(type, text){
-  const dot = $("toastDot");
-  dot.className = "dot" + (type==="ok" ? " ok" : type==="bad" ? " bad" : "");
-  $("toastText").textContent = text;
-}
-
-function updateHUD(){
-  $("roundNow").textContent = String(round);
-  $("roundMax").textContent = String(totalRounds);
-  $("scoreL").textContent = String(scoreL);
-  $("scoreR").textContent = String(scoreR);
-
-  $("stepNow").textContent = String(Math.min(Math.abs(pull), stepToWin));
-  $("stepWin").textContent = String(stepToWin);
-
-  const shiftPx = pull * SHIFT_PER_STEP;
-  $("rope").style.setProperty("--shift", `${shiftPx}px`);
-  $("knot").style.setProperty("--shift", `${shiftPx}px`);
-  $("pL").style.setProperty("--shift", `${shiftPx}px`);
-  $("pR").style.setProperty("--shift", `${shiftPx}px`);
-}
-
-function renderQuestion(side, q){
-  const qEl = side==="L" ? $("qL") : $("qR");
-  const cEl = side==="L" ? $("choicesL") : $("choicesR");
-  qEl.textContent = q.prompt;
-
-  cEl.innerHTML = "";
-  const labels = ["A","B","C","D"];
-
-  q.options.forEach((opt, idx)=>{
-    const btn = document.createElement("button");
-    btn.className = "choiceBtn";
-    btn.innerHTML = `<span class="lab">${labels[idx]})</span> ${opt}`;
-    btn.onclick = ()=> onAnswer(side, idx);
-    cEl.appendChild(btn);
-  });
-}
-
-function disableChoices(disabled=true){
-  ["choicesL","choicesR"].forEach(id=>{
-    $(id).querySelectorAll("button").forEach(b=> b.disabled = disabled);
-  });
-}
-
-function newRound(){
-  currentL = pickQuestion();
-  currentR = pickQuestion(currentL.prompt);
-
-  renderQuestion("L", currentL);
-  renderQuestion("R", currentR);
-
-  setToast("neutral", `Раунд ${round}/${totalRounds}. Екі топ та жауап берсін!`);
-  disableChoices(false);
-  locked = false;
-  updateHUD();
-}
-
-let answeredL = false;
-let answeredR = false;
-let correctL = false;
-let correctR = false;
-
-function burst(side){
-  const el = side==="L" ? $("pL") : $("pR");
-  el.classList.remove("burstL","burstR");
-  void el.offsetWidth; // restart animation
-  el.classList.add(side==="L" ? "burstL" : "burstR");
-  setTimeout(()=> el.classList.remove("burstL","burstR"), 260);
-}
-
-function onAnswer(side, chosenIndex){
-  if(!started || locked) return;
-
-  const containerId = side==="L" ? "choicesL" : "choicesR";
-  $(containerId).querySelectorAll("button").forEach(b=> b.disabled = true);
-
-  if(side==="L"){
-    answeredL = true;
-    correctL = (chosenIndex === currentL.answerIndex);
-  }else{
-    answeredR = true;
-    correctR = (chosenIndex === currentR.answerIndex);
+  function ensureAudio(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
   }
 
-  if(answeredL && answeredR){
-    resolveRound();
-  }else{
-    setToast("neutral", `Екінші топтың жауабын күтеміз…`);
+  function tone(freq, dur=0.12, type="sine", gain=0.06, glideTo=null){
+    if(!audioCtx) return;
+    const t0 = audioCtx.currentTime;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t0);
+    if(glideTo){
+      o.frequency.exponentialRampToValueAtTime(glideTo, t0 + dur);
+    }
+
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    o.connect(g).connect(audioCtx.destination);
+    o.start(t0);
+    o.stop(t0 + dur + 0.02);
   }
-}
 
-function resolveRound(){
-  locked = true;
+  function startBG(){
+    ensureAudio();
+    stopBG();
+    if(!bgOn) return;
 
-  if(correctL) scoreL++;
-  if(correctR) scoreR++;
+    const notes = [220, 277.18, 329.63, 392, 440, 523.25];
+    let step = 0;
 
-  let delta = 0; // negative => left pulls, positive => right pulls
-  if(correctL && !correctR) delta = -1;
-  if(!correctL && correctR) delta = +1;
+    bgTimer = setInterval(()=>{
+      if(!bgOn) return;
+      const f = notes[step % notes.length] * (step % 8 === 0 ? 0.5 : 1);
+      tone(f, 0.10, "sine", 0.020, f*1.01);
+      if(step % 4 === 0) tone(110, 0.14, "triangle", 0.012);
+      step++;
+    }, 140);
+  }
 
-  pull += delta;
+  function stopBG(){
+    if(bgTimer) clearInterval(bgTimer);
+    bgTimer = null;
+  }
 
-  if(delta === 0){
-    if(correctL && correctR){
-      setToast("ok", "Екі топ та дұрыс! Арқан қозғалмайды, бірақ ұпай қосылды ✅✅");
-      burst("L"); burst("R");
+  function sfxYuraa(){
+    if(!sfxOn) return;
+    ensureAudio();
+
+    // fanfare
+    tone(523.25, 0.10, "triangle", 0.09, 784);
+    setTimeout(()=>tone(659.25, 0.10, "triangle", 0.08), 90);
+    setTimeout(()=>tone(784.00, 0.12, "triangle", 0.09), 180);
+    setTimeout(()=>tone(988.00, 0.14, "triangle", 0.08), 280);
+
+    // short cheer-like noise punch
+    const t0 = audioCtx.currentTime + 0.02;
+    const bufferSize = Math.floor(0.18 * audioCtx.sampleRate);
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++){
+      data[i] = (Math.random()*2-1) * Math.exp(-i/(data.length/6));
+    }
+    const src = audioCtx.createBufferSource();
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.05, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.18);
+    src.buffer = buffer;
+    src.connect(g).connect(audioCtx.destination);
+    src.start(t0);
+  }
+
+  function sfxFail(){
+    if(!sfxOn) return;
+    ensureAudio();
+    tone(220, 0.12, "sawtooth", 0.06, 160);
+    setTimeout(()=>tone(160, 0.12, "sawtooth", 0.05), 120);
+  }
+
+  // =========================
+  // 2) QUESTIONS (Python)
+  // =========================
+  // 10 раундқа жететін pool. Әр жаққа бөлек сұрақ келеді.
+  const QPOOL = [
+    {q:`print("py"*3)`, options:["py3","pypypy","py py py","Қате"], a:1},
+    {q:`print(len([0,1,2,3]))`, options:["3","4","5","Қате"], a:1},
+    {q:`print(bool(0))`, options:["True","False","0","Қате"], a:1},
+    {q:`s="информатика"\nprint(s[2:7])`, options:["форма","форм","нфор","рмати"], a:1},
+    {q:`print(10//3)`, options:["3.33","3","1","Қате"], a:1},
+    {q:`print(10%3)`, options:["0","1","3","Қате"], a:1},
+    {q:`x=5\nx+=2\nprint(x)`, options:["5","7","10","Қате"], a:1},
+    {q:`print(2**4)`, options:["6","8","16","Қате"], a:2},
+    {q:`print(min([9,4,7]))`, options:["9","7","4","Қате"], a:2},
+    {q:`print(max([9,4,7]))`, options:["9","7","4","Қате"], a:0},
+    {q:`s="banana"\nprint(s.count("a"))`, options:["2","3","4","Қате"], a:1},
+    {q:`s="python"\nprint(s[1:4])`, options:["pyt","yth","tho","Қате"], a:1},
+    {q:`a=[3,1,2]\na.sort()\nprint(a[0])`, options:["3","2","1","Қате"], a:2},
+    {q:`print(sum([1,2,3,4]))`, options:["9","10","11","Қате"], a:1},
+  ];
+
+  function pickQuestion(){
+    return QPOOL[Math.floor(Math.random()*QPOOL.length)];
+  }
+
+  // =========================
+  // 3) GAME STATE
+  // =========================
+  const TOTAL_ROUNDS = 10;
+
+  let started = false;
+  let round = 1;
+
+  let scoreL = 0, scoreR = 0;
+
+  // Rope visual position (-1..+1)
+  let ropePos = 0;
+  let ropeVel = 0;
+  const DAMP = 0.90;
+  const VIS_PULL_CORRECT = 0.14;
+  const VIS_PULL_WRONG   = 0.08;
+
+  // current questions
+  let qL = null, qR = null;
+
+  // each round: each side answers once
+  let answeredL = false, answeredR = false;
+
+  // =========================
+  // 4) ELEMENTS
+  // =========================
+  const roundPill = document.getElementById("roundPill");
+  const stepPill  = document.getElementById("stepPill");
+  const qElL = document.getElementById("qL");
+  const qElR = document.getElementById("qR");
+  const optsL = document.getElementById("optsL");
+  const optsR = document.getElementById("optsR");
+  const scoreElL = document.getElementById("scoreL");
+  const scoreElR = document.getElementById("scoreR");
+  const ticker = document.getElementById("ticker");
+  const knot = document.getElementById("knot");
+  const stage = document.getElementById("stage");
+
+  const btnStart = document.getElementById("btnStart");
+  const btnReset = document.getElementById("btnReset");
+  const btnMusic = document.getElementById("btnMusic");
+  const btnSfx   = document.getElementById("btnSfx");
+
+  const overlay = document.getElementById("overlay");
+  const winTitle = document.getElementById("winTitle");
+  const winQuote = document.getElementById("winQuote");
+  const winSub = document.getElementById("winSub");
+  const winAvatar = document.getElementById("winAvatar");
+  const btnClose = document.getElementById("btnClose");
+  const btnAgain = document.getElementById("btnAgain");
+  const btnJustClose = document.getElementById("btnJustClose");
+
+  // =========================
+  // 5) RENDER
+  // =========================
+  function setTicker(msg){ ticker.textContent = msg; }
+  function updateTop(){
+    roundPill.textContent = `Раунд: ${Math.min(round, TOTAL_ROUNDS)}/${TOTAL_ROUNDS}`;
+    stepPill.textContent  = `Қадам: ${Math.min(round, TOTAL_ROUNDS)}/${TOTAL_ROUNDS}`;
+  }
+  function updateScores(){
+    scoreElL.textContent = scoreL;
+    scoreElR.textContent = scoreR;
+  }
+
+  function renderSide(side, q){
+    const qEl = side==="L" ? qElL : qElR;
+    const optsWrap = side==="L" ? optsL : optsR;
+
+    qEl.textContent = q.q;
+
+    optsWrap.innerHTML = "";
+    const letters = ["A","B","C","D"];
+    q.options.forEach((t,i)=>{
+      const b = document.createElement("button");
+      b.className = "opt";
+      b.innerHTML = `${letters[i]}) ${t}`;
+      b.addEventListener("click", ()=> choose(side, i), {passive:true});
+      b.addEventListener("touchstart", ()=>{}, {passive:true});
+      optsWrap.appendChild(b);
+    });
+  }
+
+  function disableSide(side){
+    const wrap = side==="L" ? optsL : optsR;
+    [...wrap.querySelectorAll(".opt")].forEach(b=>{
+      b.classList.add("disabled");
+      b.disabled = true;
+    });
+  }
+
+  function markSide(side, choice, correct){
+    const wrap = side==="L" ? optsL : optsR;
+    const btns = [...wrap.querySelectorAll(".opt")];
+    btns.forEach((b,i)=>{
+      if(i===correct) b.classList.add("correct");
+      if(i===choice && choice!==correct) b.classList.add("wrong");
+    });
+  }
+
+  // =========================
+  // 6) GAME FLOW
+  // =========================
+  function newRound(){
+    answeredL = false;
+    answeredR = false;
+
+    qL = pickQuestion();
+    qR = pickQuestion();
+
+    renderSide("L", qL);
+    renderSide("R", qR);
+
+    updateTop();
+    setTicker(`Раунд ${round}/${TOTAL_ROUNDS} — Екі жақ та жауап берсін!`);
+  }
+
+  function choose(side, choice){
+    if(!started) return;
+
+    if(side==="L" && answeredL) return;
+    if(side==="R" && answeredR) return;
+
+    const q = side==="L" ? qL : qR;
+    const correct = q.a;
+    const ok = (choice === correct);
+
+    if(side==="L") answeredL = true; else answeredR = true;
+
+    markSide(side, choice, correct);
+    disableSide(side);
+
+    if(ok){
+      if(side==="L") scoreL++; else scoreR++;
+      updateScores();
+      setTicker(`${side==="L" ? "Көк топ" : "Қызыл топ"}: Дұрыс! ✅ УРАА!`);
+      sfxYuraa();
+      ropeVel += (side==="L" ? -VIS_PULL_CORRECT : +VIS_PULL_CORRECT);
     }else{
-      setToast("bad", "Екі топ та қате… Арқан да ренжіді 😅");
+      setTicker(`${side==="L" ? "Көк топ" : "Қызыл топ"}: Қате ❌`);
+      sfxFail();
+      // wrong gives small pull to opponent (visual only)
+      ropeVel += (side==="L" ? +VIS_PULL_WRONG : -VIS_PULL_WRONG);
     }
-  }else if(delta < 0){
-    setToast("ok", "Көк топ дұрыс! Арқан көк жаққа тартылды 🔵");
-    burst("L");
-  }else{
-    setToast("ok", "Қызыл топ дұрыс! Арқан қызыл жаққа тартылды 🔴");
-    burst("R");
-  }
 
-  updateHUD();
-
-  if(Math.abs(pull) >= stepToWin){
-    endGame(pull < 0 ? "Көк топ" : "Қызыл топ");
-    return;
-  }
-
-  round++;
-  if(round > totalRounds){
-    let winner = "Тең!";
-    if(pull < 0) winner = "Көк топ";
-    else if(pull > 0) winner = "Қызыл топ";
-    else {
-      if(scoreL > scoreR) winner = "Көк топ";
-      else if(scoreR > scoreL) winner = "Қызыл топ";
+    // екеуі де жауап берсе — келесі раунд
+    if(answeredL && answeredR){
+      setTimeout(()=>{
+        round++;
+        if(round > TOTAL_ROUNDS){
+          finishGame();
+        }else{
+          newRound();
+        }
+      }, 650);
     }
-    endGame(winner, true);
-    return;
   }
 
-  setTimeout(()=>{
-    answeredL = answeredR = false;
-    correctL = correctR = false;
+  function finishGame(){
+    started = false;
+    stopBG();
+    setTicker("Ойын аяқталды! 🏁");
+
+    let winner = "draw";
+    if(scoreL > scoreR) winner = "L";
+    if(scoreR > scoreL) winner = "R";
+
+    overlay.classList.add("show");
+
+    winAvatar.innerHTML = "";
+    const img = document.createElement("img");
+    img.src = (winner==="R") ? FOX_IMG : RABBIT_IMG;
+    img.alt = "winner";
+    winAvatar.appendChild(img);
+
+    if(winner==="L"){
+      winTitle.textContent = "ЖЕҢІМПАЗ: КӨК ТОП";
+      winQuote.textContent = "Қоян: Көрдің бе? 😎 Мен сені жеңдім!";
+    }else if(winner==="R"){
+      winTitle.textContent = "ЖЕҢІМПАЗ: ҚЫЗЫЛ ТОП";
+      winQuote.textContent = "Түлкі: Көрдің бе? 😼 Мен сені жеңдім!";
+    }else{
+      winTitle.textContent = "НӘТИЖЕ: ТЕҢ ОЙЫН";
+      winQuote.textContent = "Екеуің де күштісіңдер. Қайтадан! 🔥";
+    }
+    winSub.textContent = `Ұпай: Көк ${scoreL} — ${scoreR} Қызыл • Раунд: ${TOTAL_ROUNDS}/${TOTAL_ROUNDS}`;
+  }
+
+  function resetGame(){
+    started = false;
+    round = 1;
+    scoreL = 0; scoreR = 0;
+    ropePos = 0; ropeVel = 0;
+    updateScores();
+    updateTop();
+    qElL.textContent = 'Бастау үшін “Бастау” бас 😄';
+    qElR.textContent = 'Бастау үшін “Бастау” бас 😄';
+    optsL.innerHTML = "";
+    optsR.innerHTML = "";
+    setTicker("Бастау бас — музыка да дайын 🎶");
+    stopBG();
+  }
+
+  // =========================
+  // 7) ROPE ANIMATION (visual)
+  // =========================
+  function stageWidth(){ return stage.getBoundingClientRect().width; }
+  function track(){
+    const w = stageWidth();
+    const left = w * 0.12;
+    const right = w * 0.88;
+    const mid = (left + right) / 2;
+    const span = right - left;
+    return {mid, span};
+  }
+  function updateRope(){
+    ropePos += ropeVel;
+    ropeVel *= DAMP;
+    ropePos *= 0.992;
+    if(ropePos > 1) ropePos = 1;
+    if(ropePos < -1) ropePos = -1;
+
+    const {mid, span} = track();
+    const x = mid + ropePos * (span/2);
+    knot.style.left = `${x}px`;
+
+    requestAnimationFrame(updateRope);
+  }
+
+  // =========================
+  // 8) UI BUTTONS
+  // =========================
+  btnStart.addEventListener("click", () => {
+    if(started) return;
+    ensureAudio();       // 👈 маңызды (браузер рұқсаты)
+    if(bgOn) startBG();  // 🎵
+    started = true;
+    round = 1;
+    scoreL = 0; scoreR = 0;
+    updateScores();
     newRound();
-  }, 650);
-}
+  }, {passive:true});
 
-function endGame(winner, byRounds=false){
-  disableChoices(true);
-  started = false;
+  btnReset.addEventListener("click", () => {
+    resetGame();
+  }, {passive:true});
 
-  $("field").classList.remove("running"); // stop pulling animation
+  btnMusic.addEventListener("click", () => {
+    ensureAudio();
+    bgOn = !bgOn;
+    btnMusic.textContent = bgOn ? "🎵 Музыка: ON" : "🎵 Музыка: OFF";
+    if(bgOn && started) startBG();
+    if(!bgOn) stopBG();
+  }, {passive:true});
 
-  const title = byRounds ? "Раундтар бітті!" : "Ойын аяқталды! 🏁";
-  $("winTitle").textContent = title;
+  btnSfx.addEventListener("click", () => {
+    ensureAudio();
+    sfxOn = !sfxOn;
+    btnSfx.textContent = sfxOn ? "🔊 SFX: ON" : "🔇 SFX: OFF";
+  }, {passive:true});
 
-  let desc = `Жеңімпаз: ${winner}. Ұпай: Көк=${scoreL}, Қызыл=${scoreR}.`;
-  desc += byRounds ? ` Арқан позициясы: ${pull}.` : ` Арқан бағыты: ${pull<0 ? "Көк" : "Қызыл"} жақта.`;
-  $("winDesc").textContent = desc;
+  function closeOverlay(){ overlay.classList.remove("show"); }
+  btnClose.addEventListener("click", closeOverlay, {passive:true});
+  btnJustClose.addEventListener("click", closeOverlay, {passive:true});
+  btnAgain.addEventListener("click", () => {
+    closeOverlay();
+    ensureAudio();
+    if(bgOn) startBG();
+    started = true;
+    round = 1;
+    scoreL = 0; scoreR = 0;
+    updateScores();
+    newRound();
+  }, {passive:true});
 
-  $("overlay").style.display = "flex";
-}
+  // init
+  resetGame();
+  updateRope();
 
-function resetGame(){
-  started = false;
-  locked = false;
-
-  round = 1;
-  scoreL = 0;
-  scoreR = 0;
-  pull = 0;
-
-  answeredL = answeredR = false;
-  correctL = correctR = false;
-
-  $("field").classList.remove("running"); // stop animation
-
-  $("qL").textContent = "Бастау бас!";
-  $("qR").textContent = "Бастау бас!";
-  $("choicesL").innerHTML = "";
-  $("choicesR").innerHTML = "";
-
-  setToast("neutral", "Дайын. “Бастау” бас.");
-  updateHUD();
-}
-
-function startGame(){
-  if(started) return;
-  started = true;
-
-  totalRounds = TOTAL_ROUNDS_DEFAULT;
-  stepToWin = STEP_TO_WIN_DEFAULT;
-
-  $("overlay").style.display = "none";
-  $("field").classList.add("running"); // start pulling animation
-
-  round = 1;
-  scoreL = 0;
-  scoreR = 0;
-  pull = 0;
-
-  answeredL = answeredR = false;
-  correctL = correctR = false;
-
-  setToast("neutral", "Ойын басталды! Екі топ та жауап берсін!");
-  updateHUD();
-  newRound();
-}
-
-/* buttons */
-$("btnStart").addEventListener("click", startGame);
-$("btnReset").addEventListener("click", resetGame);
-$("btnPlayAgain").addEventListener("click", ()=>{ $("overlay").style.display="none"; startGame(); });
-$("btnClose").addEventListener("click", ()=>{ $("overlay").style.display="none"; });
-
-resetGame();
+})();
 </script>
 </body>
 </html>
