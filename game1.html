@@ -604,21 +604,57 @@
   // =========================
   // 10 раундқа жететін pool. Әр жаққа бөлек сұрақ келеді.
   const QPOOL = [
-    {q:`print("py"*3)`, options:["py3","pypypy","py py py","Қате"], a:1},
-    {q:`print(len([0,1,2,3]))`, options:["3","4","5","Қате"], a:1},
-    {q:`print(bool(0))`, options:["True","False","0","Қате"], a:1},
-    {q:`s="информатика"\nprint(s[2:7])`, options:["форма","форм","нфор","рмати"], a:1},
-    {q:`print(10//3)`, options:["3.33","3","1","Қате"], a:1},
-    {q:`print(10%3)`, options:["0","1","3","Қате"], a:1},
-    {q:`x=5\nx+=2\nprint(x)`, options:["5","7","10","Қате"], a:1},
-    {q:`print(2**4)`, options:["6","8","16","Қате"], a:2},
-    {q:`print(min([9,4,7]))`, options:["9","7","4","Қате"], a:2},
-    {q:`print(max([9,4,7]))`, options:["9","7","4","Қате"], a:0},
-    {q:`s="banana"\nprint(s.count("a"))`, options:["2","3","4","Қате"], a:1},
-    {q:`s="python"\nprint(s[1:4])`, options:["pyt","yth","tho","Қате"], a:1},
-    {q:`a=[3,1,2]\na.sort()\nprint(a[0])`, options:["3","2","1","Қате"], a:2},
-    {q:`print(sum([1,2,3,4]))`, options:["9","10","11","Қате"], a:1},
-  ];
+  { q:`break не істейді?`, 
+    options:["Циклді қайта бастайды","Циклді толық тоқтатады","Бағдарламаны жабады","Айнымалыны өзгертеді"], 
+    a:1 
+  },
+
+  { q:`Нәтиже қандай?\nfor i in range(5):\n    if i == 3:\n        break\n    print(i)`, 
+    options:["0 1 2","0 1 2 3","3","0 1"], 
+    a:0 
+  },
+
+  { q:`Нәтиже қандай?\nfor i in range(4):\n    print(i)\n    break`, 
+    options:["0","0 1 2 3","1","Ештеңе шықпайды"], 
+    a:0 
+  },
+
+  { q:`Нәтиже қандай?\nfor i in range(1, 6):\n    if i == 5:\n        break\n    print(i)`, 
+    options:["1 2 3 4","1 2 3 4 5","5","2 3 4"], 
+    a:0 
+  },
+
+  { q:`Бұл код қанша сан шығарады?\nfor i in range(10):\n    if i == 2:\n        break\n    print(i)`, 
+    options:["1","2","3","10"], 
+    a:1 
+  },
+
+  { q:`Нәтиже қандай?\ni = 0\nwhile True:\n    print(i)\n    break`, 
+    options:["0","Шексіз шығады","Қате шығады","Ештеңе шықпайды"], 
+    a:0 
+  },
+
+  { q:`Нәтиже қандай?\nfor i in range(3):\n    if i == 0:\n        break\n    print(i)`, 
+    options:["0","1 2","Ештеңе шықпайды","0 1 2"], 
+    a:2 
+  },
+
+  { q:`Қай кезде break орындалады?\nfor i in range(5):\n    if i == 4:\n        break`, 
+    options:["i = 0","i = 2","i = 4","i = 5"], 
+    a:2 
+  },
+
+  { q:`Нәтиже қандай?\nfor i in range(1, 5):\n    print(i)\n    if i == 2:\n        break`, 
+    options:["1 2","1 2 3 4","2","1"], 
+    a:0 
+  },
+
+  { q:`break қолданбасақ не болады?\nfor i in range(3):\n    print(i)`, 
+    options:["Цикл тоқтайды","Барлық сандар шығады","Қате болады","Бір ғана сан шығады"], 
+    a:1 
+  },
+];
+
 
   function pickQuestion(){
     return QPOOL[Math.floor(Math.random()*QPOOL.length)];
