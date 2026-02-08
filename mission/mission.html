@@ -541,43 +541,83 @@
     };
 
     // ===== Missions =====
-    const missions={
-      1:{ title:"1-миссия: Мұғалім True/False", subtitle:"30 секунд таймер. Мұғалім TRUE/FALSE басады.", type:"teacher_tf",
-        questions:[
-          {text:"Python-да тізім индексы 0-ден басталады.", correct:true},
-          {text:"print(2**3) нәтижесі 6 болады.", correct:false},
-          {text:"len('abc') = 3", correct:true},
-          {text:"x = 5; x += 2 → x 6 болады.", correct:false},
-          {text:"'5' + '2' нәтижесі '52' болады.", correct:true},
-        ]},
-      2:{ title:"2-миссия: Код жазу", subtitle:"Тапсырманы Python кодымен жаз. Тексеру — авто-чек (кілт сөздер арқылы).", type:"code_write",
-        task:{
-          text:"a = 7, b = 3 берілсін. Экранға ең үлкенін шығаратын Python код жаз.",
-          starter:"# a=7\n# b=3\n# Код жаз:\n",
-          requiredAll:["a","b","print"],
-          requiredAny:[
-            ["max(", "print("],
-            ["if","else","print"]
-          ]
-        }},
-      3:{ title:"3-миссия: Тест", subtitle:"Бір дұрыс жауап.", type:"mcq",
-        q:{ text:"Python-да тізімнің соңына элемент қосудың дұрыс әдісі қайсы?",
-            options:["list.add(x)","list.append(x)","list.push(x)","list.insertEnd(x)"],
-            answerIndex:1 }},
-      4:{ title:"4-миссия: True / False", subtitle:"Берілген тұжырымды анықта.", type:"tf",
-        q:{ text:"for циклы else бөлігі break болмаса орындалады.", correct:true }},
-      5:{ title:"5-миссия: Сәйкестендіру (Drag & Drop)", subtitle:"Карточкаларды дұрыс анықтамаларға сүйреп апар.", type:"match_drag",
-        match:{
-          leftTitle:"Термин",
-          rightTitle:"Анықтама",
-          pairs:[
-            ["CPU","Процессор"],
-            ["RAM","Жедел жад"],
-            ["SSD","Тұрақты жинақтауыш"],
-            ["OS","Операциялық жүйе"],
-          ]
-        }},
-    };
+const missions = {
+  // 1) Teacher True/False — алгоритм түрлері
+  1: {
+    title: "1-миссия: Алгоритм түрлері (мұғалім True/False)",
+    subtitle: "30 секунд таймер. Мұғалім TRUE/FALSE басады.",
+    type: "teacher_tf",
+    questions: [
+      { text: "Алгоритм түрлері: сызықтық, тармақталу, циклдік.", correct: true },
+      { text: "Алгоритм түрлері: тек сызықтық және циклдік қана болады.", correct: false },
+      { text: "Тармақталу алгоритмі шартқа байланысты әртүрлі бағытта орындалады.", correct: true },
+      { text: "Циклдік алгоритмде қайталау мүлде қолданылмайды.", correct: false },
+      { text: "Сызықтық алгоритмде командалар ретімен бірінен кейін бірі орындалады.", correct: true },
+    ],
+  },
+
+  // 2) Code (output) — берілген кодтың нәтижесін жазу
+  // ЕСКЕРТУ: сенің кодта 2-миссия type:"code_write" еді.
+  // Қазіргі логика "код жазу" үшін token-check жасайды. Бізге output керек.
+  // Сол үшін 2-миссияны "mcq" қылмаймыз, дәл output енгізетіндей "code_output" тип қосамыз.
+  // Төмендегі type өзгертілді: "code_output"
+  2: {
+    title: "2-миссия: Код нәтижесі",
+    subtitle: "Кодтың экранға шығаратын нәтижесін жазыңыз.",
+    type: "code_output",
+    task: {
+      prompt: "Нәтиже қандай болады?",
+      code: "for i in range(1, 9, 3):\n    print(i)",
+      answer: "1 4 7"
+      // Егер сен нақты "1 3 6" керек десең,
+      // онда range параметрлері басқа болуы тиіс.
+      // Мысалы: range(1, 7, 2) -> 1 3 5
+      // немесе range(1, 7, ?) нақты 1 3 6 шығару қиын.
+      // Қазір Python бойынша дұрыс нәтиже: 1 4 7
+    }
+  },
+
+  // 3) Тест — жалғастыру циклы (continue)
+  3: {
+    title: "3-миссия: Тест",
+    subtitle: "Бір дұрыс жауап.",
+    type: "mcq",
+    q: {
+      text: "Python-да циклді жалғастыру (келесі қайталауға өткізу) командасы қайсысы?",
+      options: ["for", "while", "continue", "break"],
+      answerIndex: 2,
+    },
+  },
+
+  // 4) True/False — тұжырым
+  4: {
+    title: "4-миссия: True / False",
+    subtitle: "Берілген тұжырымды анықта.",
+    type: "tf",
+    q: {
+      text: "for — шартты цикл, ал while — параметрлі цикл.",
+      correct: false,
+    },
+  },
+
+  // 5) Matching — for range қысқа есептер (код -> output)
+  5: {
+    title: "5-миссия: Сәйкестендіру (Drag & Drop)",
+    subtitle: "Кодты дұрыс нәтижемен сәйкестендір.",
+    type: "match_drag",
+    match: {
+      leftTitle: "Код",
+      rightTitle: "Нәтиже (output)",
+      pairs: [
+        ["for i in range(1, 6): print(i)", "1 2 3 4 5"],
+        ["for i in range(2, 11, 2): print(i)", "2 4 6 8 10"],
+        ["for i in range(5, 0, -1): print(i)", "5 4 3 2 1"],
+        ["for i in range(0, 9, 3): print(i)", "0 3 6"],
+      ],
+    },
+  },
+};
+
 
     // ===== Cutscenes (mission complete videos) =====
     const cutscenes={
