@@ -10,6 +10,7 @@ function renderSidebar(){
         </div>
         <nav class="nav">
           <a href="dashboard.html">🏠 Басты бет</a>
+          <a href="game1.html">📘 Арқан тарту</a>
           <a href="glossary.html">📘 Энциклопедия</a>
           <a href="mycourse.html">🧠 Python үйренеміз</a> 
           <a href="problems.html">💡 Олимпиадалық есептер</a>
