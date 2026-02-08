@@ -13,6 +13,7 @@ function renderSidebar(){
           <a href="game1.html">📘 Арқан тарту</a>
           <a href="game3.html">📘 Рандом шақыру</a>
           <a href="game2.html">📘 Миссия орындау</a>
+          <a href="game4.html">📘 Рефлексия</a>
           <a href="glossary.html">📘 Энциклопедия</a>
           <a href="mycourse.html">🧠 Python үйренеміз</a> 
           <a href="problems.html">💡 Олимпиадалық есептер</a>
