@@ -36,7 +36,6 @@
       overflow:hidden;
     }
 
-    /* Topbar */
     .topbar{
       position:fixed; left:0; right:0; top:0;
       height:68px;
@@ -92,7 +91,6 @@
 
     #musicVol{ width:120px; accent-color:#3bd1ff; opacity:.9; }
 
-    /* Intro overlay */
     .overlay{
       position:fixed; inset:0;
       display:grid; place-items:center;
@@ -126,7 +124,6 @@
       display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
     }
 
-    /* Scene */
     .scene{ position:absolute; inset:68px 0 0 0; }
     .scene::before{
       content:"";
@@ -147,7 +144,7 @@
       background-position:center;
       filter: saturate(1.08) contrast(1.06);
       z-index:1;
-      pointer-events:none; /* never block clicks */
+      pointer-events:none;
     }
     .bg::after{
       content:"";
@@ -169,11 +166,7 @@
     }
     @keyframes wave{ from{ transform:translateX(-90px);} to{ transform:translateX(90px);} }
 
-    .islands{
-      position:absolute; inset:0;
-      z-index:10;
-      pointer-events:auto;
-    }
+    .islands{ position:absolute; inset:0; z-index:10; pointer-events:auto; }
     .island{
       position:absolute;
       transform:translate(-50%,-50%);
@@ -226,7 +219,7 @@
     .hud{
       position:absolute;
       left:18px; bottom:18px;
-      width:min(460px, calc(100% - 36px));
+      width:min(520px, calc(100% - 36px));
       border-radius: var(--r);
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.08);
@@ -247,7 +240,6 @@
       background: rgba(255,255,255,.08);
     }
 
-    /* Modal (missions + cutscenes) */
     .modal{ position:fixed; inset:0; display:none; z-index:2000; }
     .modal.show{ display:block; }
     .backdrop{ position:absolute; inset:0; background: rgba(0,0,0,.62); }
@@ -312,7 +304,6 @@
     .choice:hover{ transform: translateY(-1px); }
     .choice input{ transform:scale(1.1); }
 
-    /* Timer */
     .timer{
       display:flex; align-items:center; gap:10px; justify-content:space-between;
       padding:12px 14px;
@@ -323,7 +314,6 @@
     .bar{ height:10px; border-radius:999px; background: rgba(255,255,255,.10); overflow:hidden; flex:1; }
     .fill{ height:100%; width:100%; background: var(--grad); transform-origin:left; }
 
-    /* Result */
     .result{
       margin-top:10px;
       padding:12px 14px;
@@ -335,7 +325,6 @@
     .bad{ border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.12); }
     .warn{ border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.12); }
 
-    /* Matching drag-drop */
     .matchWrap{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
     @media (max-width:840px){ .matchWrap{ grid-template-columns:1fr; } }
     .bank{
@@ -388,7 +377,6 @@
     </div>
   </header>
 
-  <!-- Intro -->
   <section class="overlay" id="introOverlay" aria-hidden="false">
     <div class="card">
       <div class="cardHead">
@@ -396,9 +384,9 @@
         <p>Видеоны көріп болғасын “Картаға өту” бас. (Не болмаса Skip 😄)</p>
       </div>
       <div class="videoWrap">
-        <video id="introVideo" controls playsinline>
+        <video id="introVideo" controls playsinline preload="metadata">
           <source src="assets/intro.mp4" type="video/mp4"/>
-          Видео жоқ болса да, Skip арқылы өтесің.
+          Видео ашылмаса да Skip арқылы өтесің.
         </video>
       </div>
       <div class="cardActions">
@@ -407,7 +395,6 @@
     </div>
   </section>
 
-  <!-- Scene -->
   <main class="scene">
     <div class="bg"></div>
 
@@ -437,7 +424,6 @@
     </div>
   </main>
 
-  <!-- Mission Modal -->
   <section class="modal" id="modal" aria-hidden="true">
     <div class="backdrop" id="modalBackdrop"></div>
     <div class="modalCard" role="dialog" aria-modal="true">
@@ -453,7 +439,6 @@
     </div>
   </section>
 
-  <!-- Cutscene Modal (mission complete video) -->
   <section class="modal" id="cutscene" aria-hidden="true">
     <div class="backdrop" id="cutBackdrop"></div>
     <div class="modalCard" style="width:min(900px,calc(100% - 36px));" role="dialog" aria-modal="true">
@@ -465,7 +450,7 @@
         <button class="btn btn--ghost" id="btnCutClose">✕</button>
       </div>
       <div class="modalBody">
-        <video id="cutVideo" controls playsinline style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:#000">
+        <video id="cutVideo" controls playsinline preload="metadata" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:#000">
           <source id="cutSrc" src="" type="video/mp4">
         </video>
         <div class="muted" style="margin-top:10px">Видео біткен соң өзі жабылады. Қаласаң Skip 😄</div>
@@ -477,14 +462,12 @@
     </div>
   </section>
 
-  <!-- Audio -->
   <audio id="bgm" loop preload="auto"><source src="assets/bgm.mp3" type="audio/mpeg"></audio>
   <audio id="sfxWin" preload="auto"><source src="assets/sfx-win.mp3" type="audio/mpeg"></audio>
   <audio id="sfxLose" preload="auto"><source src="assets/sfx-lose.mp3" type="audio/mpeg"></audio>
   <audio id="sfxUnlock" preload="auto"><source src="assets/sfx-unlock.mp3" type="audio/mpeg"></audio>
 
   <script>
-    // ===== Helpers =====
     const $=(s,p=document)=>p.querySelector(s);
     const $$=(s,p=document)=>[...p.querySelectorAll(s)];
     const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -508,7 +491,7 @@
       $("#btnMusic").addEventListener("click", async ()=>{
         audio.enabled=!audio.enabled;
         localStorage.setItem("mv_audio", JSON.stringify({enabled:audio.enabled, volume: audio.bgm?.volume ?? 0.35}));
-        if(audio.enabled) await safePlayBgm(); else audio.bgm.pause();
+        if(audio.enabled) await safePlayBgm(); else try{ audio.bgm.pause(); }catch{}
         renderMusicBtn();
       });
 
@@ -517,13 +500,22 @@
         setVolume(v);
         localStorage.setItem("mv_audio", JSON.stringify({enabled:audio.enabled, volume:v}));
       });
+
+      // audio load errors (optional)
+      [audio.bgm,audio.sfxWin,audio.sfxLose,audio.sfxUnlock].forEach(el=>{
+        el?.addEventListener("error", ()=>{
+          updateHUD($("#hudMission").textContent, "⚠️", "Аудио файл табылмады: assets/ ішінде mp3 бар-жоғын тексер.");
+        });
+      });
     }
     function renderMusicBtn(){ $("#btnMusic").textContent = audio.enabled ? "🔊 Музыка: ON" : "🔇 Музыка: OFF"; }
     function setVolume(v){
       v=clamp(v,0,1);
-      audio.bgm.volume=v;
+      if(audio.bgm) audio.bgm.volume=v;
       const sfxV=clamp(v+0.15,0,1);
-      audio.sfxWin.volume=sfxV; audio.sfxLose.volume=sfxV; audio.sfxUnlock.volume=sfxV;
+      if(audio.sfxWin) audio.sfxWin.volume=sfxV;
+      if(audio.sfxLose) audio.sfxLose.volume=sfxV;
+      if(audio.sfxUnlock) audio.sfxUnlock.volume=sfxV;
       $("#musicVol").value=String(Math.round(v*100));
     }
     async function safePlayBgm(){ try{ await audio.bgm.play(); }catch{} }
@@ -541,85 +533,74 @@
     };
 
     // ===== Missions =====
-const missions = {
-  // 1) Teacher True/False — алгоритм түрлері
-  1: {
-    title: "1-миссия: Алгоритм түрлері (мұғалім True/False)",
-    subtitle: "30 секунд таймер. Мұғалім TRUE/FALSE басады.",
-    type: "teacher_tf",
-    questions: [
-      { text: "Алгоритм түрлері: сызықтық, тармақталу, циклдік.", correct: true },
-      { text: "Алгоритм түрлері: тек сызықтық және циклдік қана болады.", correct: false },
-      { text: "Тармақталу алгоритмі шартқа байланысты әртүрлі бағытта орындалады.", correct: true },
-      { text: "Циклдік алгоритмде қайталау мүлде қолданылмайды.", correct: false },
-      { text: "Сызықтық алгоритмде командалар ретімен бірінен кейін бірі орындалады.", correct: true },
-    ],
-  },
+    const missions = {
+      1: {
+        title: "1-миссия: Алгоритм түрлері (мұғалім True/False)",
+        subtitle: "30 секунд таймер. Мұғалім TRUE/FALSE басады.",
+        type: "teacher_tf",
+        questions: [
+          { text: "Алгоритм түрлері: сызықтық, тармақталу, циклдік.", correct: true },
+          { text: "Алгоритм түрлері: тек сызықтық және циклдік қана болады.", correct: false },
+          { text: "Тармақталу алгоритмі шартқа байланысты әртүрлі бағытта орындалады.", correct: true },
+          { text: "Циклдік алгоритмде қайталау мүлде қолданылмайды.", correct: false },
+          { text: "Сызықтық алгоритмде командалар ретімен бірінен кейін бірі орындалады.", correct: true },
+        ],
+      },
 
-  // 2) Code (output) — берілген кодтың нәтижесін жазу
-  // ЕСКЕРТУ: сенің кодта 2-миссия type:"code_write" еді.
-  // Қазіргі логика "код жазу" үшін token-check жасайды. Бізге output керек.
-  // Сол үшін 2-миссияны "mcq" қылмаймыз, дәл output енгізетіндей "code_output" тип қосамыз.
-  // Төмендегі type өзгертілді: "code_output"
-  2: {
-    title: "2-миссия: Код нәтижесі",
-    subtitle: "Кодтың экранға шығаратын нәтижесін жазыңыз.",
-    type: "code_output",
-    task: {
-      prompt: "Нәтиже қандай болады?",
-      code: "for i in range(1, 9, 3):\n    print(i)",
-      answer: "1 4 7"
-      // Егер сен нақты "1 3 6" керек десең,
-      // онда range параметрлері басқа болуы тиіс.
-      // Мысалы: range(1, 7, 2) -> 1 3 5
-      // немесе range(1, 7, ?) нақты 1 3 6 шығару қиын.
-      // Қазір Python бойынша дұрыс нәтиже: 1 4 7
-    }
-  },
+      // ✅ МІНЕ ОСЫ ЖЕР ТҮЗЕЛДІ: code_write форматында
+      2: {
+        title: "2-миссия: Код жазу",
+        subtitle: "Тапсырманы Python кодымен жаз. Тексеру — жеңіл авто-чек.",
+        type: "code_write",
+        task: {
+          text: "a = 7, b = 3 берілсін. Экранға ең үлкенін шығаратын Python код жаз.",
+          starter: "a = 7\nb = 3\n# code here\n",
+          requiredAll: ["a", "b", "print"],
+          requiredAny: [
+            ["max", "a", "b"],
+            ["if", "else", "print"]
+          ],
+        }
+      },
 
-  // 3) Тест — жалғастыру циклы (continue)
-  3: {
-    title: "3-миссия: Тест",
-    subtitle: "Бір дұрыс жауап.",
-    type: "mcq",
-    q: {
-      text: "Python-да циклді жалғастыру (келесі қайталауға өткізу) командасы қайсысы?",
-      options: ["for", "while", "continue", "break"],
-      answerIndex: 2,
-    },
-  },
+      3: {
+        title: "3-миссия: Тест",
+        subtitle: "Бір дұрыс жауап.",
+        type: "mcq",
+        q: {
+          text: "Python-да циклді жалғастыру (келесі қайталауға өткізу) командасы қайсысы?",
+          options: ["for", "while", "continue", "break"],
+          answerIndex: 2,
+        },
+      },
 
-  // 4) True/False — тұжырым
-  4: {
-    title: "4-миссия: True / False",
-    subtitle: "Берілген тұжырымды анықта.",
-    type: "tf",
-    q: {
-      text: "for — шартты цикл, ал while — параметрлі цикл.",
-      correct: false,
-    },
-  },
+      4: {
+        title: "4-миссия: True / False",
+        subtitle: "Берілген тұжырымды анықта.",
+        type: "tf",
+        q: {
+          text: "for — шартты цикл, ал while — параметрлі цикл.",
+          correct: false,
+        },
+      },
 
-  // 5) Matching — for range қысқа есептер (код -> output)
-  5: {
-    title: "5-миссия: Сәйкестендіру (Drag & Drop)",
-    subtitle: "Кодты дұрыс нәтижемен сәйкестендір.",
-    type: "match_drag",
-    match: {
-      leftTitle: "Код",
-      rightTitle: "Нәтиже (output)",
-      pairs: [
-        ["for i in range(1, 6): print(i)", "1 2 3 4 5"],
-        ["for i in range(2, 11, 2): print(i)", "2 4 6 8 10"],
-        ["for i in range(5, 0, -1): print(i)", "5 4 3 2 1"],
-        ["for i in range(0, 9, 3): print(i)", "0 3 6"],
-      ],
-    },
-  },
-};
+      5: {
+        title: "5-миссия: Сәйкестендіру (Drag & Drop)",
+        subtitle: "Кодты дұрыс нәтижемен сәйкестендір.",
+        type: "match_drag",
+        match: {
+          leftTitle: "Код",
+          rightTitle: "Нәтиже (output)",
+          pairs: [
+            ["for i in range(1, 6): print(i)", "1 2 3 4 5"],
+            ["for i in range(2, 11, 2): print(i)", "2 4 6 8 10"],
+            ["for i in range(5, 0, -1): print(i)", "5 4 3 2 1"],
+            ["for i in range(0, 9, 3): print(i)", "0 3 6"],
+          ],
+        },
+      },
+    };
 
-
-    // ===== Cutscenes (mission complete videos) =====
     const cutscenes={
       1:{ title:"1-миссия аяқталды!", sub:"Кеме келесі аралға жүзіп барады…", src:"assets/cut1.mp4" },
       2:{ title:"2-миссия аяқталды!", sub:"Код миссиясы өтті ✅", src:"assets/cut2.mp4" },
@@ -628,7 +609,6 @@ const missions = {
       5:{ title:"Финал!", sub:"Барлық миссия орындалды 🎉", src:"assets/cut5.mp4" },
     };
 
-    // ===== Storage =====
     function persist(){
       localStorage.setItem("mv_state", JSON.stringify({
         introDone: state.introDone,
@@ -649,7 +629,6 @@ const missions = {
       }catch{}
     }
 
-    // ===== UI =====
     function renderIslands(){
       $$(".island").forEach(b=>{
         const i=+b.dataset.island;
@@ -680,7 +659,6 @@ const missions = {
       $("#islandPill").textContent=`Арал ${state.currentIsland}`;
     }
 
-    // ===== Modal (missions) =====
     function openMissionModal(title, sub){
       $("#mTitle").textContent=title;
       $("#mSub").textContent=sub;
@@ -695,7 +673,6 @@ const missions = {
       $("#modal").setAttribute("aria-hidden","true");
     }
 
-    // ===== Cutscene overlay =====
     function openCutscene(island, onDone){
       const data=cutscenes[island];
       if(!data){ onDone?.(); return; }
@@ -719,7 +696,6 @@ const missions = {
         onDone?.();
       };
 
-      // one-shot handlers
       const once=(el, ev, fn)=>{
         const h=()=>{ el.removeEventListener(ev, h); fn(); };
         el.addEventListener(ev, h);
@@ -731,10 +707,14 @@ const missions = {
       once($("#cutBackdrop"), "click", cleanup);
       once(v, "ended", cleanup);
 
-      v.play().catch(()=>{});
+      // if video missing -> show HUD hint
+      v.addEventListener("error", ()=>{
+        updateHUD(`Арал ${island}`, "⚠️", "Катсцена видео табылмады (assets/cut*.mp4). Skip баса бер.");
+      }, {once:true});
+
+      v.play().catch(()=>{ /* user can press play */ });
     }
 
-    // ===== Timer =====
     function startTimer(seconds, onTick, onDone){
       stopTimer();
       state.timerEndsAt=Date.now()+seconds*1000;
@@ -750,7 +730,6 @@ const missions = {
       if(state.timerId){ clearInterval(state.timerId); state.timerId=null; state.timerEndsAt=null; }
     }
 
-    // ===== Results =====
     function failHint(msg){
       playSfx(audio.sfxLose);
       const d=document.createElement("div");
@@ -765,7 +744,6 @@ const missions = {
       return d;
     }
 
-    // ===== Mission Engine =====
     function openIsland(i){
       if(i>state.unlocked) return;
       state.currentIsland=i;
@@ -782,7 +760,6 @@ const missions = {
       renderIslands();
       playSfx(audio.sfxWin);
 
-      // show cutscene, then unlock + move
       openCutscene(i, ()=>{
         if(i<5){
           state.unlocked=Math.max(state.unlocked, i+1);
@@ -808,6 +785,13 @@ const missions = {
     }
 
     function runMission(i, m){
+      if(!m){
+        openMissionModal("Қате", "Миссия табылмады");
+        $("#mBody").innerHTML = `<div class="result bad"><b>Mission ${i} жоқ ❌</b><div class="muted" style="margin-top:6px">missions объектісін тексер.</div></div>`;
+        $("#mActions").appendChild(btn("Жабу","btn btn--ghost")).onclick=closeMissionModal;
+        return;
+      }
+
       openMissionModal(m.title, m.subtitle);
       const body=$("#mBody");
       const actions=$("#mActions");
@@ -874,14 +858,14 @@ const missions = {
       }
 
       if(m.type==="code_write"){
-        const t=m.task;
+        const t=m.task || {};
         const box=document.createElement("div");
         box.className="grid2";
         box.innerHTML=`
           <div class="block">
             <h3>Тапсырма</h3>
-            <div style="font-size:16px;font-weight:800">${esc(t.text)}</div>
-            <div class="muted" style="margin-top:10px">Авто-тексеру кілт сөздер/құрылым арқылы.</div>
+            <div style="font-size:16px;font-weight:800">${esc(t.text || "—")}</div>
+            <div class="muted" style="margin-top:10px">Авто-тексеру жеңіл ережелер арқылы.</div>
           </div>
           <div class="block">
             <h3>Код</h3>
@@ -895,7 +879,8 @@ const missions = {
           </div>
         `;
         body.appendChild(box);
-        $("#codeArea").value=t.starter;
+
+        $("#codeArea").value = t.starter ?? "";
 
         $("#btnHint").onclick=()=>{
           $("#codeRes").innerHTML=`<div class="result warn"><b>Hint 💡</b>
@@ -908,21 +893,27 @@ const missions = {
         $("#btnCheck").onclick=()=>{
           const code=$("#codeArea").value||"";
           const c=normalize(code);
-          const allOk=t.requiredAll.every(k=>c.includes(normalize(k)));
+
+          const requiredAll = Array.isArray(t.requiredAll) ? t.requiredAll : [];
+          const requiredAny = Array.isArray(t.requiredAny) ? t.requiredAny : [];
+
+          const allOk = requiredAll.every(k=>c.includes(normalize(k)));
           if(!allOk){
             $("#codeRes").innerHTML="";
-            $("#codeRes").appendChild(failHint("Кодта міндетті түрде a, b және print болуы керек."));
+            $("#codeRes").appendChild(failHint("Кемі: a, b және print болуы керек."));
             return;
           }
+
           let anyOk=false;
-          for(const group of t.requiredAny){
-            if(group.every(k=>c.includes(normalize(k)))) { anyOk=true; break; }
+          for(const group of requiredAny){
+            if(Array.isArray(group) && group.every(k=>c.includes(normalize(k)))) { anyOk=true; break; }
           }
-          if(!anyOk){
+          if(requiredAny.length && !anyOk){
             $("#codeRes").innerHTML="";
             $("#codeRes").appendChild(failHint("max(...) немесе if/else құрылымын қолдан."));
             return;
           }
+
           $("#codeRes").innerHTML="";
           $("#codeRes").appendChild(okHint("Дұрыс!"));
           actions.innerHTML="";
@@ -1124,9 +1115,12 @@ const missions = {
         actions.appendChild(closeB);
         return;
       }
+
+      // Unknown type safeguard
+      body.innerHTML = `<div class="result bad"><b>Белгісіз type: ${esc(m.type)} ❌</b><div class="muted" style="margin-top:6px">runMission ішінде handler жоқ.</div></div>`;
+      actions.appendChild(closeB);
     }
 
-    // ===== Intro / Global =====
     function finishIntro(){
       state.introDone=true;
       const ov=$("#introOverlay");
@@ -1141,12 +1135,16 @@ const missions = {
       location.reload();
     }
 
-    // ===== Boot =====
     document.addEventListener("DOMContentLoaded", ()=>{
       initAudio();
       restore();
 
-      // Buttons
+      // ✅ video error hints
+      const introV = $("#introVideo");
+      introV.addEventListener("error", ()=>{
+        updateHUD("Интро", "⚠️", "intro.mp4 табылмады. assets/intro.mp4 бар ма тексер. Skip баса бер.");
+      }, {once:true});
+
       $("#btnToMap").addEventListener("click", async ()=>{ if(audio.enabled) await safePlayBgm(); finishIntro(); });
       $("#btnSkipIntro").addEventListener("click", async ()=>{ if(audio.enabled) await safePlayBgm(); finishIntro(); });
       $("#btnReset").addEventListener("click", hardReset);
@@ -1154,7 +1152,6 @@ const missions = {
       $("#btnClose").addEventListener("click", closeMissionModal);
       $("#modalBackdrop").addEventListener("click", closeMissionModal);
 
-      // Islands click
       $$(".island").forEach(b=>{
         b.addEventListener("click",(e)=>{
           e.preventDefault(); e.stopPropagation();
