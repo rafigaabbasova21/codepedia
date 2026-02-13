@@ -12,7 +12,7 @@ function renderSidebar(){
           <a href="dashboard.html">🏠 Басты бет</a>
           <a href="glossary.html">📘 Энциклопедия</a>
           <a href="mycourse.html">🧠 Python үйренеміз</a> 
-          <a href="game1.html"> 🎮 Ойындар панелі</a>
+          <a href="gameshub.html"> 🎮 Ойындар панелі</a>
           <a href="problems.html">💡 Олимпиадалық есептер</a>
           <a href="stats.html">📊 Прогресс</a>
           <a href="game1.html">📘 Арқан тарту</a>
