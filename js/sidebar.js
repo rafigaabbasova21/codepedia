@@ -15,11 +15,6 @@ function renderSidebar(){
           <a href="gameshub.html"> 🎮 Ойындар панелі</a>
           <a href="problems.html">💡 Олимпиадалық есептер</a>
           <a href="stats.html">📊 Прогресс</a>
-          <a href="game1.html">📘 Арқан тарту</a>
-          <a href="game3.html">📘 Рандом шақыру</a>
-          <a href="mission/mission.html">📘 Миссия орындау</a>
-          <a href="game4.html">📘 Рефлексия</a>
-          <a href="glossary.html">📘 Энциклопедия</a>
         </nav>
         <div style="height:14px"></div>
         <div class="sidebar-footer">
