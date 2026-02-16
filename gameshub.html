@@ -3,182 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Game Hub • Ойындар панелі</title>
+  <title>CodePedia · Ойындар панелі</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/common.css" />
 
   <style>
     :root{
-      --bg:#0b1220;
-      --bg2:#070b14;
-      --card: rgba(255,255,255,.08);
-      --card2: rgba(255,255,255,.11);
-      --stroke: rgba(255,255,255,.12);
-      --text:#eaf0ff;
-      --muted:#a8b3cf;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --radius: 22px;
+      --bg:#f8fafc;
+      --text:#0f172a;
+      --muted:#475569;
+      --card:#ffffff;
+      --stroke:#e2e8f0;
+      --grad1:#2563eb;
+      --grad2:#06b6d4;
+      --radius:20px;
+      --shadow: 0 10px 24px rgba(15,23,42,.08);
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
       color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 15% 10%, rgba(37,99,235,.28), transparent 60%),
-        radial-gradient(900px 600px at 85% 25%, rgba(6,182,212,.22), transparent 60%),
-        radial-gradient(800px 600px at 55% 90%, rgba(168,85,247,.18), transparent 60%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-      min-height:100vh;
-      overflow-x:hidden;
     }
 
-    .topbar{
-      position: sticky;
-      top:0;
-      z-index:50;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(10,14,26,.78), rgba(10,14,26,.35));
-      border-bottom: 1px solid rgba(255,255,255,.10);
-    }
-    .topbar .inner{
-      max-width:1100px;
-      margin:0 auto;
-      padding:18px 18px;
+    .container{max-width:1150px;margin:26px auto;padding:0 16px}
+
+    .page-head{
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
       gap:14px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width: 220px;
-    }
-    .logo{
-      width:44px; height:44px;
-      border-radius:14px;
-      background:
-        radial-gradient(12px 12px at 25% 25%, rgba(255,255,255,.75), transparent 60%),
-        linear-gradient(135deg, #2563eb, #06b6d4);
-      box-shadow: 0 14px 35px rgba(37,99,235,.25);
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .brand h1{
-      margin:0;
-      font-size:16px;
-      font-weight:800;
-      letter-spacing:.2px;
-      line-height:1.1;
-    }
-    .brand p{
-      margin:2px 0 0;
-      font-size:12px;
-      color:var(--muted);
-      font-weight:600;
-    }
-
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
       flex-wrap:wrap;
-      justify-content:flex-end;
+      margin-bottom:14px;
+    }
+    .page-title{
+      display:flex; gap:12px; align-items:center;
+    }
+    .badge-dot{
+      width:44px;height:44px;border-radius:14px;
+      background: linear-gradient(135deg,var(--grad1),var(--grad2));
+      box-shadow: 0 14px 28px rgba(37,99,235,.18);
+    }
+    h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.2px}
+    .sub{margin:4px 0 0;color:var(--muted);font-weight:600;font-size:13px}
+
+    .toolbar{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      margin-top:2px;
     }
     .search{
       position:relative;
-      width:min(360px, 52vw);
+      width:min(420px, 78vw);
     }
     .search input{
       width:100%;
-      padding:12px 14px 12px 40px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
+      padding:11px 12px 11px 40px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      background:#fff;
+      color:var(--text);
       outline:none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      box-shadow: 0 6px 14px rgba(15,23,42,.04);
     }
-    .search input::placeholder{color: rgba(168,179,207,.7)}
+    .search input:focus{border-color:#93c5fd; box-shadow: 0 0 0 3px rgba(37,99,235,.12)}
     .search svg{
-      position:absolute;
-      left:12px; top:50%;
-      transform:translateY(-50%);
-      opacity:.7;
+      position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      color:#64748b;
     }
 
     .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      background:#fff;
       color:var(--text);
-      padding:11px 12px;
-      border-radius:16px;
+      padding:10px 12px;
+      border-radius:14px;
       cursor:pointer;
-      font-weight:700;
+      font-weight:800;
       font-size:13px;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      user-select:none;
+      box-shadow: 0 8px 18px rgba(15,23,42,.06);
+      transition: transform .12s ease, box-shadow .12s ease;
       display:flex; align-items:center; gap:8px;
     }
-    .btn:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.09);
-      border-color: rgba(255,255,255,.20);
-    }
-
-    .container{
-      max-width:1100px;
-      margin:0 auto;
-      padding:22px 18px 60px;
+    .btn:hover{transform: translateY(-1px); box-shadow: 0 12px 24px rgba(15,23,42,.08)}
+    .btn.primary{
+      border:0;
+      color:#fff;
+      background: linear-gradient(90deg,var(--grad1),var(--grad2));
+      box-shadow: 0 12px 26px rgba(37,99,235,.18);
     }
 
     .hero{
       display:grid;
-      grid-template-columns: 1.3fr .7fr;
-      gap:14px;
-      align-items:stretch;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
       margin-top:14px;
     }
-    @media (max-width: 900px){
-      .hero{grid-template-columns:1fr}
-      .brand{min-width:auto}
-    }
+    @media (max-width: 920px){ .hero{grid-template-columns:1fr} }
 
     .panel{
+      background: var(--card);
+      border:1px solid var(--stroke);
       border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.06));
       box-shadow: var(--shadow);
-      padding:18px;
-      position:relative;
-      overflow:hidden;
+      padding:16px;
     }
-    .panel:before{
-      content:"";
-      position:absolute;
-      inset:-60px -60px auto auto;
-      width:220px; height:220px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.18), transparent 60%);
-      transform: rotate(18deg);
-      pointer-events:none;
-    }
-    .panel h2{
-      margin:0 0 6px;
-      font-size:20px;
-      letter-spacing:.2px;
-    }
-    .panel .sub{
-      margin:0;
-      color:var(--muted);
-      font-weight:600;
-      font-size:13px;
-      line-height:1.5;
-    }
+    .panel h2{margin:0 0 6px;font-size:18px;font-weight:900}
+    .panel p{margin:0;color:var(--muted);font-weight:600;font-size:13px;line-height:1.5}
 
     .stats{
       display:grid;
@@ -187,46 +119,44 @@
       margin-top:12px;
     }
     .stat{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      border-radius: 16px;
       padding:12px;
+      background:#fff;
     }
-    .stat .k{font-size:12px; color:var(--muted); font-weight:700}
-    .stat .v{font-size:18px; font-weight:800; margin-top:2px}
+    .stat .k{font-size:12px;color:var(--muted);font-weight:800}
+    .stat .v{font-size:18px;font-weight:900;margin-top:2px}
 
     .filters{
       display:flex;
       flex-wrap:wrap;
       gap:10px;
-      margin:18px 0 16px;
-      align-items:center;
+      margin-top:12px;
     }
     .pill{
-      padding:10px 12px;
+      padding:9px 12px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      font-weight:800;
+      border:1px solid var(--stroke);
+      background:#fff;
+      font-weight:900;
       font-size:12px;
       cursor:pointer;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      transition: transform .12s ease, box-shadow .12s ease;
       user-select:none;
     }
-    .pill:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.09);
-      border-color: rgba(255,255,255,.20);
-    }
+    .pill:hover{transform: translateY(-1px); box-shadow: 0 10px 18px rgba(15,23,42,.06)}
     .pill.active{
-      background: linear-gradient(135deg, rgba(37,99,235,.35), rgba(6,182,212,.25));
-      border-color: rgba(120,160,255,.35);
+      border-color: transparent;
+      color:#fff;
+      background: linear-gradient(90deg,var(--grad1),var(--grad2));
+      box-shadow: 0 12px 22px rgba(37,99,235,.18);
     }
 
     .grid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:14px;
+      gap:16px;
+      margin-top:16px;
     }
     @media (max-width: 980px){ .grid{grid-template-columns: repeat(2, 1fr);} }
     @media (max-width: 620px){ .grid{grid-template-columns: 1fr;} }
@@ -234,111 +164,97 @@
     .card{
       text-decoration:none;
       color:inherit;
+      background:#fff;
+      border:1px solid var(--stroke);
       border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      box-shadow: var(--shadow);
       overflow:hidden;
-      position:relative;
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-      outline: none;
+      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
     }
     .card:hover{
-      transform: translateY(-3px);
-      border-color: rgba(255,255,255,.20);
-      background: rgba(255,255,255,.075);
+      transform: translateY(-2px);
+      border-color:#cbd5e1;
+      box-shadow: 0 16px 30px rgba(15,23,42,.10);
     }
-
     .thumb{
       height:110px;
+      background: linear-gradient(135deg,var(--grad1),var(--grad2));
       position:relative;
-      overflow:hidden;
-      border-bottom: 1px solid rgba(255,255,255,.10);
     }
-    .thumb:after{
+    .thumb::after{
       content:"";
       position:absolute; inset:0;
-      background: radial-gradient(260px 140px at 20% 20%, rgba(255,255,255,.22), transparent 55%);
-      mix-blend-mode: screen;
+      background: radial-gradient(260px 140px at 20% 20%, rgba(255,255,255,.55), transparent 60%);
       pointer-events:none;
     }
-
     .meta{
-      padding:14px 14px 16px;
+      padding:14px;
       display:flex;
       gap:10px;
       align-items:flex-start;
       justify-content:space-between;
     }
-    .title{
-      font-weight:900;
-      font-size:15px;
-      letter-spacing:.1px;
-      margin:0 0 6px;
-    }
-    .desc{
-      margin:0;
-      color:var(--muted);
-      font-size:12px;
-      font-weight:600;
-      line-height:1.45;
-    }
+    .title{margin:0 0 6px;font-weight:900;font-size:15px}
+    .desc{margin:0;color:var(--muted);font-size:12px;font-weight:600;line-height:1.45}
     .tag{
       flex:0 0 auto;
       font-size:11px;
       font-weight:900;
-      padding:8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid #dbeafe;
+      background:#eff6ff;
+      color:#1d4ed8;
       white-space:nowrap;
-      opacity:.95;
     }
 
     .empty{
-      margin-top:18px;
-      padding:18px;
+      margin-top:16px;
+      padding:16px;
       border-radius: var(--radius);
-      border:1px dashed rgba(255,255,255,.18);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
+      border:1px dashed #cbd5e1;
+      background:#fff;
+      color:var(--muted);
       font-weight:700;
       display:none;
+      box-shadow: 0 8px 20px rgba(15,23,42,.06);
     }
-
     .footer{
-      margin-top:22px;
-      color: rgba(168,179,207,.75);
+      margin-top:18px;
+      color:#64748b;
       font-size:12px;
       font-weight:600;
       text-align:center;
     }
     .kbd{
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      border-bottom-color: rgba(255,255,255,.22);
+      border:1px solid #e2e8f0;
+      background:#fff;
       padding:2px 6px;
       border-radius:8px;
       font-weight:900;
       font-size:11px;
       margin:0 4px;
-      color: rgba(234,240,255,.9);
+      color:#0f172a;
     }
   </style>
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="inner">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
+  <!-- ✅ сенің дайын Header/Sidebar -->
+  <div id="appHeader"></div>
+  <div id="appSidebar"></div>
+
+  <main class="container">
+    <div class="page-head">
+      <div class="page-title">
+        <div class="badge-dot" aria-hidden="true"></div>
         <div>
           <h1>Ойындар панелі</h1>
-          <p>Сабаққа арналған интерактивтер • бір жерден</p>
+          <p class="sub">Сабаққа арналған интерактивтер • бір жерден</p>
         </div>
       </div>
 
-      <div class="actions">
+      <div class="toolbar">
         <div class="search">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2" opacity=".9"/>
@@ -347,20 +263,18 @@
           <input id="q" placeholder="Ойын атауын ізде… (мысалы: арқан, рефлексия)" />
         </div>
 
-        <button class="btn" id="shuffleBtn" title="Карточкаларды араластыру">
+        <button class="btn primary" id="shuffleBtn" title="Карточкаларды араластыру">
           <span aria-hidden="true">🎲</span> Shuffle
         </button>
       </div>
     </div>
-  </header>
 
-  <main class="container">
     <section class="hero">
       <div class="panel">
         <h2>Бүгінгі сабақ “ойын режимінде” өтсін 🔥</h2>
-        <p class="sub">
-          Карточканы бас — ойынды аш. Сілтемелерді өзің қоясың.
-          Іздеу үшін <span class="kbd">Ctrl</span> + <span class="kbd">K</span> бассаң да болады.
+        <p>
+          Карточканы бас — ойынды аш. Іздеу үшін
+          <span class="kbd">Ctrl</span> + <span class="kbd">K</span>.
         </p>
 
         <div class="stats">
@@ -377,23 +291,31 @@
 
       <div class="panel">
         <h2>Фильтр</h2>
-        <p class="sub">Бір кликте керек түрін ғана қалдыр.</p>
+        <p>Бір кликте керек түрін ғана қалдыр.</p>
         <div class="filters" id="filters"></div>
       </div>
     </section>
 
-    <section style="margin-top:14px;">
+    <section>
       <div class="grid" id="grid"></div>
       <div class="empty" id="empty">Ештеңе табылмады. Басқа сөзбен іздеп көр 😅</div>
     </section>
 
     <div class="footer">
-      Made for classroom energy ⚡️ • Карточкалардың <b>href</b> ішіне өз сілтемелеріңді қойып шық.
+      Card-тағы <b>href</b> ішіне өз сілтемеңді қойып шығасың.
     </div>
   </main>
 
+  <!-- ✅ сенің дайын header/sidebar JS -->
+  <script src="js/header.js"></script>
+  <script src="js/sidebar.js"></script>
   <script>
-    // === 1) Ойындар тізімі: осында сілтемелерді (href) ауыстырасың ===
+    renderHeader();
+    renderSidebar();
+  </script>
+
+  <script>
+    // === 1) Ойындар тізімі (href-тарды осында өзгертесің) ===
     const games = [
       { title:"Арқан тарту ойыны", tag:"Quiz",      desc:"Екі команда • сұрақ/код • тартыс", href:"game1.html",  grad:["#2563eb","#06b6d4"] },
       { title:"Көңілді ұяшықтар", tag:"Activity",   desc:"Тапсырма ұяшықтары • қызық формат", href:"game6.html", grad:["#a855f7","#06b6d4"] },
@@ -405,7 +327,6 @@
 
     const tagOrder = ["All","Quiz","Game","Quest","Activity","Reflection","Tool"];
 
-    // === 2) UI генерация ===
     const grid = document.getElementById("grid");
     const empty = document.getElementById("empty");
     const q = document.getElementById("q");
@@ -456,13 +377,6 @@
       return a;
     }
 
-    function render(){
-      grid.innerHTML = "";
-      current.forEach(item => grid.appendChild(makeCard(item)));
-      totalCount.textContent = games.length.toString();
-      applyFilters();
-    }
-
     function applyFilters(){
       const query = (q.value || "").trim().toLowerCase();
       const cards = [...grid.querySelectorAll(".card")];
@@ -480,12 +394,19 @@
       empty.style.display = (visible === 0) ? "block" : "none";
     }
 
+    function render(){
+      grid.innerHTML = "";
+      current.forEach(item => grid.appendChild(makeCard(item)));
+      totalCount.textContent = games.length.toString();
+      applyFilters();
+    }
+
     function buildFilters(){
       filters.innerHTML = "";
       tagOrder.forEach(t => {
         const b = document.createElement("div");
         b.className = "pill" + (t === activeTag ? " active" : "");
-        b.textContent = (t === "All") ? "All" : t;
+        b.textContent = t;
         b.addEventListener("click", () => {
           activeTag = t;
           [...filters.querySelectorAll(".pill")].forEach(x=>x.classList.remove("active"));
@@ -511,7 +432,6 @@
       render();
     });
 
-    // Ctrl+K -> focus search
     window.addEventListener("keydown", (e) => {
       if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){
         e.preventDefault();
