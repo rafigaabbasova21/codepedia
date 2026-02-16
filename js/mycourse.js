@@ -103,24 +103,22 @@
       grid._cpBound = true;
     }
 
-    // 5) Хедердегі курс прогресі
-    const totalSteps = lessons.reduce(
-      (a, l) => a + ((l.steps || []).length || 0),
-      0
-    );
-    const doneSteps = lessons.reduce((a, l) => {
-      const p = lessonProgress(l);
-      return a + (p.done || 0);
-    }, 0);
-    const pct = totalSteps ? Math.round((doneSteps * 100) / totalSteps) : 0;
+// 5) Хедердегі курс прогресі (ДҰРЫС НҰСҚА)
+const totalSteps = lessons.reduce((a, l) => a + ((l.steps || []).length || 0), 0);
+const doneSteps = lessons.reduce((a, l) => a + (lessonProgress(l).done || 0), 0);
+const pct = totalSteps ? Math.round((doneSteps * 100) / totalSteps) : 0;
 
-    const bar = document.querySelector(".progress > span");
-    const text = document.querySelector(
-      ".progress-text, .course-progress-text"
-    );
-    if (bar) bar.style.width = pct + "%";
-    if (text) text.textContent = pct + "%";
-  }
+// ✅ ДӘЛ ID арқылы аламыз
+const bar = document.getElementById("progressBar");
+const text = document.getElementById("progressPercent");
+
+if (bar) {
+  bar.style.width = pct + "%";
+}
+if (text) {
+  text.textContent = pct + "%";
+}
+
 
   // 🌟 Алғашқы рендер (localStorage-та не бар – сонымен)
   renderMyCourses();
@@ -133,3 +131,4 @@
     renderMyCourses();
   });
 })();
+
