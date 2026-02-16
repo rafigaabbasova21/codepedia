@@ -184,7 +184,44 @@
 .match-select.bad{ border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.12); }
 
 
+
+    /* ===== FIX: buttons text color (CodePedia admin) ===== */
+
+/* барлық батырмаларда мәтін қара болсын */
+.btn{
+  color: var(--text) !important;
+}
+
+/* primary — көк градиент, мәтін ақ */
+.btn.primary{
+  color:#fff !important;
+}
+
+/* ghost — ақ фон, мәтін қара */
+.btn.ghost{
+  color: var(--text) !important;
+  background:#fff;
+  border:1px solid #e2e8f0;
+}
+
+/* кестедегі action батырмалар */
+table .btn{
+  color: var(--text) !important;
+}
+
+/* hover кезінде де жоғалмасын */
+.btn:hover{
+  color: var(--text);
+}
+
+.btn.primary:hover{
+  color:#fff;
+}
+
+
   </style>
+
+  
 </head>
 <body>
   <div id="appHeader"></div>
@@ -280,6 +317,7 @@
     </script>
   </body>
 </html>
+
 
 
 
