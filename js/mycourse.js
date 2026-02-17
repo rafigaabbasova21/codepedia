@@ -23,7 +23,7 @@
 
   // Бір сабақтың прогресін есептеу (әр қолданушыға бөлек)
   function lessonProgress(lesson) {
-    const k = `cp_steps__${USER}__${lesson.id}`;
+    const k = cp_steps__${USER}__${lesson.id};
     const st = load(k, { completed: [] });
     const done = (st.completed || []).length;
     const total = (lesson.steps || []).length || 0;
@@ -34,8 +34,8 @@
   // Сабақ карточкасының HTML-і
   function cardHTML(l) {
     const { done, total, pct } = lessonProgress(l);
-    const levelBadge = `<span class="badge">Бастапқы</span>`;
-    return `
+    const levelBadge = <span class="badge">Бастапқы</span>;
+    return 
       <div class="card" style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 8px 24px rgba(15,23,42,.06);padding:16px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           ${levelBadge}
@@ -51,7 +51,7 @@
           style="border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff">
           ${done ? "Жалғастыру" : "Бастау"}
         </button>
-      </div>`;
+      </div>;
   }
 
   // 🔁 Негізгі рендер функция
@@ -81,10 +81,10 @@
 
     // 3) Егер сабақ жоқ болса — хабарлама
     if (!lessons.length) {
-      grid.innerHTML = `
+      grid.innerHTML = 
         <div class="card" style="padding:16px;border-radius:20px;border:1px dashed #cbd5e1;background:#fff">
           Әзірге жарияланған сабақ жоқ. <a href="teacher.html">Мұғалім режимінде</a> сабақ қосыңыз.
-        </div>`;
+        </div>;
     } else {
       grid.innerHTML = lessons.map(cardHTML).join("");
     }
@@ -98,27 +98,29 @@
 
         const order = lessons.map((l) => l.id);
         localStorage.setItem("cp_lesson_order", JSON.stringify(order));
-        location.href = `lesson.html?lesson=${encodeURIComponent(id)}`;
+        location.href = lesson.html?lesson=${encodeURIComponent(id)};
       });
       grid._cpBound = true;
     }
 
-// 5) Хедердегі курс прогресі (ДҰРЫС НҰСҚА)
-const totalSteps = lessons.reduce((a, l) => a + ((l.steps || []).length || 0), 0);
-const doneSteps = lessons.reduce((a, l) => a + (lessonProgress(l).done || 0), 0);
-const pct = totalSteps ? Math.round((doneSteps * 100) / totalSteps) : 0;
+    // 5) Хедердегі курс прогресі
+    const totalSteps = lessons.reduce(
+      (a, l) => a + ((l.steps || []).length || 0),
+      0
+    );
+    const doneSteps = lessons.reduce((a, l) => {
+      const p = lessonProgress(l);
+      return a + (p.done || 0);
+    }, 0);
+    const pct = totalSteps ? Math.round((doneSteps * 100) / totalSteps) : 0;
 
-// ✅ ДӘЛ ID арқылы аламыз
-const bar = document.getElementById("progressBar");
-const text = document.getElementById("progressPercent");
-
-if (bar) {
-  bar.style.width = pct + "%";
-}
-if (text) {
-  text.textContent = pct + "%";
-}
-
+    const bar = document.querySelector(".progress > span");
+    const text = document.querySelector(
+      ".progress-text, .course-progress-text"
+    );
+    if (bar) bar.style.width = pct + "%";
+    if (text) text.textContent = pct + "%";
+  }
 
   // 🌟 Алғашқы рендер (localStorage-та не бар – сонымен)
   renderMyCourses();
@@ -131,4 +133,3 @@ if (text) {
     renderMyCourses();
   });
 })();
-
